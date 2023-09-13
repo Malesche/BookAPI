@@ -31,16 +31,24 @@ namespace LibraryService.Api.Books
             return NoContent();
         }
 
-        [HttpPost("{bookId:int}, {authorId:int}")]
-        public IActionResult AddAuthor(int bookId, int authorId, AuthorRole authorRole)
+        [HttpPost("{bookId:int}/Authors")]
+        public IActionResult AddAuthor(int bookId, [FromBody]BAWriteViewModel viewModel)
         {
-            if (!_bookService.Exists(bookId))
-                return NotFound($"The Book Id {bookId} does not exist!");
-            if (!_bookService.AuthorExists(authorId))
-                return NotFound($"The Author Id {authorId} does not exist!");
+            //if (!_bookService.Exists(bookId))
+            //    return NotFound($"The Book Id {bookId} does not exist!");
+            //if (!_bookService.AuthorExists(authorId))
+            //    return NotFound($"The Author Id {authorId} does not exist!");
 
-            _bookService.AddBookAuthor(bookId, authorId, authorRole);
+            //_bookService.AddBookAuthor(bookId, authorId, authorRole);
 
+            //return NoContent();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{bookId:int}/Authors/{authorId:int}")]
+        public IActionResult RemoveAuthor(int bookId, int authorId, [FromQuery]AuthorRole? role = null)
+        {
             return NoContent();
         }
 
