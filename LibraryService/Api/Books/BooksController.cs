@@ -98,7 +98,13 @@ namespace LibraryService.Api.Books
                 Format = book.Format,
                 Language = book.Language,
                 WorkId = book.WorkId,
-                BookAuthors = book.BookAuthors.ToList()
+                BookAuthors = book
+                    .BookAuthors
+                    .Select(ba => new BAReadViewModel
+                    {
+                        AuthorId = ba.AuthorId,
+                        AuthorRole = ba.AuthorRole
+                    }).ToList()
             };
         }
 
