@@ -7,6 +7,7 @@ namespace LibraryService.Api.Books.ViewModels
         [Required]
         public string Title { get; set; }
 
+        [Required]
         public string Format { get; set; }
         
         public string Language { get; set; }
