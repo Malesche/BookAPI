@@ -25,6 +25,11 @@ namespace LibraryService.Persistence
                 .HasMany(e => e.Books)
                 .WithMany(e => e.Authors)
                 .UsingEntity<BookAuthor>();
+
+            modelBuilder.Entity<BookAuthor>()
+                .HasIndex(e => new { e.BookId, e.AuthorId, e.AuthorRole })
+                .IsUnique()
+                .HasFilter(null);
         }
     }
 }
