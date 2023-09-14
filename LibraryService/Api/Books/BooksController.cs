@@ -34,14 +34,14 @@ namespace LibraryService.Api.Books
         [HttpPost("{bookId:int}/Authors")]
         public IActionResult AddAuthor(int bookId, [FromBody]BAWriteViewModel viewModel)
         {
-            //if (!_bookService.Exists(bookId))
-            //    return NotFound($"The Book Id {bookId} does not exist!");
-            //if (!_bookService.AuthorExists(authorId))
-            //    return NotFound($"The Author Id {authorId} does not exist!");
+            if (!_bookService.Exists(bookId))
+                return NotFound($"The Book Id {bookId} does not exist!");
+            if (!_bookService.AuthorExists(viewModel.AuthorId))
+                return NotFound($"The Author Id {viewModel.AuthorId} does not exist!");
+            if (_bookService.BABookAuthorRoleExists(bookId, viewModel.AuthorId, viewModel.AuthorRole))
+                return Conflict($"Author {viewModel.AuthorId} is already saved in role {viewModel.AuthorRole} for Book {bookId}");
 
-            //_bookService.AddBookAuthor(bookId, authorId, authorRole);
-
-            //return NoContent();
+            _bookService.AddBookAuthor(bookId, viewModel.AuthorId, viewModel.AuthorRole);
 
             return NoContent();
         }

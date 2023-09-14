@@ -22,7 +22,7 @@ namespace LibraryService.Api.Books
             _dbContext.SaveChanges();
         }
 
-        public void AddBookAuthor(int bookId, int authorId, AuthorRole authorRole)
+        public void AddBookAuthor(int bookId, int authorId, AuthorRole? authorRole)
         {
             var bookAuthorEntry = new BookAuthor
             {
@@ -84,6 +84,13 @@ namespace LibraryService.Api.Books
             return _dbContext
                 .Authors
                 .Any(a => a.Id == id);
+        }
+
+        public bool BABookAuthorRoleExists(int bookId, int authorId, AuthorRole? authorRole)
+        {
+            return _dbContext
+                .BookAuthor
+                .Any(a => a.BookId == bookId && a.AuthorId == authorId && a.AuthorRole == authorRole);
         }
 
         private void FillBook(Book book, BookWriteModel model)
