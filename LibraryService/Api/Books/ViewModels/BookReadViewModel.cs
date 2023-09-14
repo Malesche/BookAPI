@@ -1,6 +1,4 @@
-﻿using LibraryService.Persistence;
-
-namespace LibraryService.Api.Books.ViewModels
+﻿namespace LibraryService.Api.Books.ViewModels
 {
     public class BookReadViewModel
     {

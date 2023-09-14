@@ -1,5 +1,4 @@
-﻿
-using LibraryService.Persistence;
+﻿using LibraryService.Persistence;
 using System.ComponentModel.DataAnnotations;
 
 namespace LibraryService.Api.Books.ViewModels

@@ -51,5 +51,4 @@ namespace LibraryService.Api.Authors
                 .Any(a => a.Id == id);
         }
     }
-
 }

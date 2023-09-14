@@ -1,5 +1,4 @@
-﻿using LibraryService.Api.Authors.ViewModels;
-using LibraryService.Persistence;
+﻿using LibraryService.Persistence;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryService.Api.Authors

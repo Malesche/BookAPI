@@ -54,6 +54,7 @@ namespace LibraryService.Api.Books
                 .Books
                 .ToArray();
         }
+
         public Book Get(int id)
         {
             var book = _dbContext
@@ -63,18 +64,21 @@ namespace LibraryService.Api.Books
 
             return book;
         }
+
         public bool Exists(int id)
         {
             return _dbContext
                 .Books
                 .Any(a => a.Id == id);
         }
+
         public bool WorkExists(int? id)
         {
             return _dbContext
                 .Works
                 .Any(a => a.Id == id);
         }
+
         public bool AuthorExists(int? id)
         {
             return _dbContext

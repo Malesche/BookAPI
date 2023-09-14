@@ -27,7 +27,7 @@ namespace LibraryService.Api.Authors
         {
             var allAuthors = _authorService
                 .GetAll()
-                .Select(author => ToViewModel(author));
+                .Select(ToViewModel);
 
             return Ok(allAuthors);
         }
