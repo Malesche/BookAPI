@@ -1,6 +1,7 @@
 ﻿using LibraryService.Api.Books.Models;
 using LibraryService.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace LibraryService.Api.Books
 {
@@ -32,6 +33,23 @@ namespace LibraryService.Api.Books
             };
 
             _dbContext.BookAuthor.Add(bookAuthorEntry);
+            _dbContext.SaveChanges();
+        }
+
+        public void RemoveBookAuthorInRole(int bookId, int authorId, AuthorRole? authorRole)
+        {
+            BookAuthor bookAuthorEntry = _dbContext.BookAuthor
+                .Where(ba => ba.BookId == bookId && ba.AuthorId == authorId && ba.AuthorRole == authorRole)
+                .FirstOrDefault();
+
+            _dbContext.BookAuthor.Remove(bookAuthorEntry);
+            _dbContext.SaveChanges();
+        }
+
+        public void RemoveBookAuthor(int bookId, int authorId)
+        {
+            _dbContext.BookAuthor.RemoveRange(_dbContext.BookAuthor
+                .Where(ba => ba.BookId == bookId && ba.AuthorId == authorId));
             _dbContext.SaveChanges();
         }
 

@@ -49,6 +49,17 @@ namespace LibraryService.Api.Books
         [HttpDelete("{bookId:int}/Authors/{authorId:int}")]
         public IActionResult RemoveAuthor(int bookId, int authorId, [FromQuery]AuthorRole? role = null)
         {
+            if (role is null)
+            {
+                _bookService.RemoveBookAuthor(bookId, authorId);
+            }
+            else
+            {
+                if (!_bookService.BABookAuthorRoleExists(bookId, authorId, role))
+                    return Conflict($"Author {authorId} is not saved in role {role} for Book {bookId}");
+                _bookService.RemoveBookAuthorInRole(bookId, authorId, role);
+            }
+
             return NoContent();
         }
 
