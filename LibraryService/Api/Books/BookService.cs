@@ -38,18 +38,18 @@ namespace LibraryService.Api.Books
 
         public void RemoveBookAuthorInRole(int bookId, int authorId, AuthorRole? authorRole)
         {
-            BookAuthor bookAuthorEntry = _dbContext.BookAuthor
-                .Where(ba => ba.BookId == bookId && ba.AuthorId == authorId && ba.AuthorRole == authorRole)
-                .FirstOrDefault();
-
-            _dbContext.BookAuthor.Remove(bookAuthorEntry);
+            _dbContext.BookAuthor
+                .Remove(_dbContext.BookAuthor
+                    .Where(ba => ba.BookId == bookId && ba.AuthorId == authorId && ba.AuthorRole == authorRole)
+                    .First());
             _dbContext.SaveChanges();
         }
 
         public void RemoveBookAuthor(int bookId, int authorId)
         {
-            _dbContext.BookAuthor.RemoveRange(_dbContext.BookAuthor
-                .Where(ba => ba.BookId == bookId && ba.AuthorId == authorId));
+            _dbContext.BookAuthor
+                .RemoveRange(_dbContext.BookAuthor
+                    .Where(ba => ba.BookId == bookId && ba.AuthorId == authorId));
             _dbContext.SaveChanges();
         }
 
