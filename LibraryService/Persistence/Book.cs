@@ -11,8 +11,12 @@
         public string Language { get; set; }
 
         public ICollection<BookAuthor> BookAuthors { get; set; }
-        
+
         public ICollection<Author> Authors { get; set; }
+
+        public ICollection<BookGenre> BookGenres { get; set; }
+
+        public ICollection<Genre> Genres { get; set; }
 
         public int? WorkId { get; set; }
         

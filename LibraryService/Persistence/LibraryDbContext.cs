@@ -13,6 +13,8 @@ namespace LibraryService.Persistence
         public DbSet<Book> Books { get; set; }
         public DbSet<Work> Works { get; set; }
         public DbSet<BookAuthor> BookAuthor { get; set; }
+        public DbSet<Genre> Genres { get; set; }
+        public DbSet<BookGenre> BookGenre { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,6 +32,16 @@ namespace LibraryService.Persistence
                 .HasIndex(e => new { e.BookId, e.AuthorId, e.AuthorRole })
                 .IsUnique()
                 .HasFilter(null);
+
+            modelBuilder.Entity<Book>()
+                .HasMany(e => e.Genres)
+                .WithMany(e => e.Books)
+                .UsingEntity<BookGenre>();
+
+            modelBuilder.Entity<Genre>()
+                .HasMany(e => e.Books)
+                .WithMany(e => e.Genres)
+                .UsingEntity<BookGenre>();
         }
     }
 }
