@@ -23,7 +23,7 @@ namespace LibraryService
 
             builder.Services.AddScoped<WorkService>();
             builder.Services.AddScoped<BookService>();
-            builder.Services.AddScoped<AuthorService>();
+            builder.Services.AddScoped<IAuthorService, AuthorService>();
 
             var app = builder.Build();
 

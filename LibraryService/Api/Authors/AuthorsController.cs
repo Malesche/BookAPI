@@ -8,9 +8,9 @@ namespace LibraryService.Api.Authors
     [ApiController]
     public class AuthorsController : ControllerBase
     {
-        private readonly AuthorService _authorService;
+        private readonly IAuthorService _authorService;
 
-        public AuthorsController(AuthorService authorService)
+        public AuthorsController(IAuthorService authorService)
         {
             _authorService = authorService;
         }
@@ -27,7 +27,8 @@ namespace LibraryService.Api.Authors
         {
             var allAuthors = _authorService
                 .GetAll()
-                .Select(ToViewModel);
+                .Select(ToViewModel)
+                .ToArray();
 
             return Ok(allAuthors);
         }

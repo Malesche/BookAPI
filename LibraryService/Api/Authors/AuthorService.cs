@@ -1,8 +1,22 @@
 ﻿using LibraryService.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryService.Api.Authors
 {
-    public class AuthorService
+    public interface IAuthorService
+    {
+        void Create(string name);
+
+        void Update(int id, string name);
+
+        IEnumerable<Author> GetAll();
+
+        Author Get(int id);
+
+        bool Exists(int id);
+    }
+
+    public class AuthorService : IAuthorService
     {
         private readonly LibraryDbContext _dbContext;
     
