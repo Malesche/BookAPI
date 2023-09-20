@@ -53,6 +53,7 @@ namespace LibraryService.Tests.Api.Authors
 
             var result = controller.GetAllAuthors();
 
+            Assert.IsType<OkObjectResult>(result);
             var okObjectResult = (OkObjectResult)result;
             var model = okObjectResult.Value;
             Assert.IsAssignableFrom<IList<AuthorReadViewModel>>(model);
@@ -66,5 +67,72 @@ namespace LibraryService.Tests.Api.Authors
             Assert.Equal(3, viewModelCollection[2].Id);
             Assert.Equal("Name3", viewModelCollection[2].Name);
         }
-    }
+
+        [Fact]
+        public void GetAllAuthors_CallsService()
+        {
+            var authorService = Substitute.For<IAuthorService>();
+            var controller = new AuthorsController(authorService);
+
+            controller.GetAllAuthors();
+
+            authorService.Received(1).GetAll();
+        }
+
+        [Fact]
+        public void GetAuthorById_validId_ReturnsValidViewModel()
+        {
+            var authorService = Substitute.For<IAuthorService>();
+            authorService.Get(5).Returns(new Author(){ Id = 5, Name = "Name5" });
+            var controller = new AuthorsController(authorService);
+
+            var result = controller.GetAuthorById(5);
+
+            Assert.IsType<OkObjectResult>(result);
+            var okObjectResult = (OkObjectResult)result;
+            var model = (AuthorReadViewModel)okObjectResult.Value;
+            Assert.IsAssignableFrom<AuthorReadViewModel>(model);
+
+            Assert.Equal(5, model.Id);
+            Assert.Equal("Name5", model.Name);
+        }
+
+        [Fact]
+        public void GetAuthorById_validId_CallsService()
+        {
+            var authorService = Substitute.For<IAuthorService>();
+            authorService.Get(5).Returns(new Author() { Id = 5, Name = "Name5" });
+            var controller = new AuthorsController(authorService);
+
+            controller.GetAuthorById(5);
+
+            authorService.Received(1).Get(5);
+        }
+
+        [Fact]
+        public void GetAuthorById_invalidId_DoesNotCallService()
+        {
+            var authorService = Substitute.For<IAuthorService>();
+            authorService.Get(5).Returns(l => null);
+            var controller = new AuthorsController(authorService);
+
+            var result = controller.GetAuthorById(5);
+
+            authorService.DidNotReceive().Get(Arg.Any<int>());
+        }
+
+        [Fact]
+        public void GetAuthorById_invalidId_ReturnsNotFound()
+        {
+            var authorService = Substitute.For<IAuthorService>();
+            authorService.Get(5).Returns(l => null);
+            var controller = new AuthorsController(authorService);
+
+            var result = controller.GetAuthorById(5);
+
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+
+        }
 }
