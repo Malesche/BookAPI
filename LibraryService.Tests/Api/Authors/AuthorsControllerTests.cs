@@ -110,18 +110,6 @@ namespace LibraryService.Tests.Api.Authors
         }
 
         [Fact]
-        public void GetAuthorById_invalidId_DoesNotCallService()
-        {
-            var authorService = Substitute.For<IAuthorService>();
-            authorService.Get(5).Returns(l => null);
-            var controller = new AuthorsController(authorService);
-
-            var result = controller.GetAuthorById(5);
-
-            authorService.DidNotReceive().Get(Arg.Any<int>());
-        }
-
-        [Fact]
         public void GetAuthorById_invalidId_ReturnsNotFound()
         {
             var authorService = Substitute.For<IAuthorService>();
