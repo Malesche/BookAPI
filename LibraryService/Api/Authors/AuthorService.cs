@@ -1,5 +1,4 @@
 ﻿using LibraryService.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace LibraryService.Api.Authors
 {
