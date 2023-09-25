@@ -1,4 +1,6 @@
-﻿static class Program
+﻿namespace NumberGuessing;
+
+static class Program
 {
     public static void Main()
     {
@@ -6,41 +8,48 @@
         int topOfRange = 100;
         Console.WriteLine("Think of a number between 1 and 100!");
 
-        guessInRange(bottomOfRange, topOfRange);
+        GuessInRange(bottomOfRange, topOfRange);
     }
 
-    private static void guessInRange(int bottom, int top)
+    private static void GuessInRange(int bottom, int top)
     {
-        if (top == bottom)
+        while (true)
         {
-            Console.WriteLine($"it must be {bottom}, else you lied to me!");
-        }
-        else
-        {
-            int distance = top - bottom;
-            int middle = bottom + distance / 2;
-
-            Console.WriteLine($"Is it {middle}? Then answer Y.");
-            Console.WriteLine("Else answer H or L, for higher or lower.");
-
-            string input = Console.ReadLine();
-
-            if (input?.ToLower() == "y")
+            if (top == bottom)
             {
-                Console.WriteLine("Yay!! Found it!");
-            }
-            else if (input?.ToLower() == "h")
-            {
-                guessInRange(middle + 1, top);
-            }
-            else if (input?.ToLower() == "L" || input == "l")
-            {
-                guessInRange(bottom, middle - 1);
+                Console.WriteLine($"it must be {bottom}, else you lied to me!");
             }
             else
             {
-                guessInRange(bottom, top);
+                int distance = top - bottom;
+                int middle = bottom + distance / 2;
+
+                Console.WriteLine($"Is it {middle}? Then answer Y.");
+                Console.WriteLine("Else answer H or L, for higher or lower.");
+
+                string? input = Console.ReadLine();
+
+                if (input?.ToLower() == "y")
+                {
+                    Console.WriteLine("Yay!! Found it!");
+                }
+                else if (input?.ToLower() == "h")
+                {
+                    bottom = middle + 1;
+                    continue;
+                }
+                else if (input?.ToLower() == "L" || input == "l")
+                {
+                    top = middle - 1;
+                    continue;
+                }
+                else
+                {
+                    continue;
+                }
             }
+
+            break;
         }
     }
 }

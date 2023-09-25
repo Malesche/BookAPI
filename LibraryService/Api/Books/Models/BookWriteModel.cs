@@ -10,7 +10,7 @@
 
         public int? WorkId { get; set; }
 
-        public List<BAWriteModel> BookAuthors { get; set; }
+        public List<BookAuthorWriteModel> BookAuthors { get; set; }
     }
 }
 

@@ -1,7 +1,6 @@
 ﻿using LibraryService.Api.Books.Models;
 using LibraryService.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace LibraryService.Api.Books
 {
@@ -40,8 +39,7 @@ namespace LibraryService.Api.Books
         {
             _dbContext.BookAuthor
                 .Remove(_dbContext.BookAuthor
-                    .Where(ba => ba.BookId == bookId && ba.AuthorId == authorId && ba.AuthorRole == authorRole)
-                    .First());
+                    .First(ba => ba.BookId == bookId && ba.AuthorId == authorId && ba.AuthorRole == authorRole));
             _dbContext.SaveChanges();
         }
 
@@ -70,6 +68,7 @@ namespace LibraryService.Api.Books
         {
             return _dbContext
                 .Books
+                .Include(b => b.BookAuthors)
                 .ToArray();
         }
 
@@ -104,7 +103,7 @@ namespace LibraryService.Api.Books
                 .Any(a => a.Id == id);
         }
 
-        public bool BABookAuthorRoleExists(int bookId, int authorId, AuthorRole? authorRole)
+        public bool BookAuthorRoleExists(int bookId, int authorId, AuthorRole? authorRole)
         {
             return _dbContext
                 .BookAuthor

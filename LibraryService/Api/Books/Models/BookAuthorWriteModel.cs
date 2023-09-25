@@ -2,7 +2,7 @@
 
 namespace LibraryService.Api.Books.Models
 {
-    public class BAWriteModel
+    public class BookAuthorWriteModel
     {
         public int AuthorId { get; set; }
 

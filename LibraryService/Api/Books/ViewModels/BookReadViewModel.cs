@@ -12,6 +12,6 @@
 
         public int? WorkId { get; set; }
 
-        public ICollection<BAReadViewModel> BookAuthors { get; set; }
+        public ICollection<BookAuthorReadViewModel> BookAuthors { get; set; }
     }
 }

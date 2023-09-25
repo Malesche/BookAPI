@@ -22,7 +22,7 @@ namespace LibraryService.Api.Books
             if (viewModel.WorkId != null && !_bookService.WorkExists(viewModel.WorkId))
                 return NotFound($"The Work Id {viewModel.WorkId} does not exist!");
 
-            foreach (BAWriteViewModel bookAuthor in viewModel.BookAuthors)
+            foreach (BookAuthorWriteViewModel bookAuthor in viewModel.BookAuthors)
                 if (!_bookService.AuthorExists(bookAuthor.AuthorId))
                     return NotFound($"The Author Id {bookAuthor.AuthorId} does not exist!");
 
@@ -32,13 +32,13 @@ namespace LibraryService.Api.Books
         }
 
         [HttpPost("{bookId:int}/Authors")]
-        public IActionResult AddAuthor(int bookId, [FromBody]BAWriteViewModel viewModel)
+        public IActionResult AddAuthor(int bookId, [FromBody]BookAuthorWriteViewModel viewModel)
         {
             if (!_bookService.Exists(bookId))
                 return NotFound($"The Book Id {bookId} does not exist!");
             if (!_bookService.AuthorExists(viewModel.AuthorId))
                 return NotFound($"The Author Id {viewModel.AuthorId} does not exist!");
-            if (_bookService.BABookAuthorRoleExists(bookId, viewModel.AuthorId, viewModel.AuthorRole))
+            if (_bookService.BookAuthorRoleExists(bookId, viewModel.AuthorId, viewModel.AuthorRole))
                 return Conflict($"Author {viewModel.AuthorId} is already saved in role {viewModel.AuthorRole} for Book {bookId}");
 
             _bookService.AddBookAuthor(bookId, viewModel.AuthorId, viewModel.AuthorRole);
@@ -55,7 +55,7 @@ namespace LibraryService.Api.Books
             }
             else
             {
-                if (!_bookService.BABookAuthorRoleExists(bookId, authorId, role))
+                if (!_bookService.BookAuthorRoleExists(bookId, authorId, role))
                     return Conflict($"Author {authorId} is not saved in role {role} for Book {bookId}");
                 _bookService.RemoveBookAuthorInRole(bookId, authorId, role);
             }
@@ -68,7 +68,7 @@ namespace LibraryService.Api.Books
         {
             var allBooks = _bookService
                 .GetAll()
-                .Select(book => ToViewModel(book));
+                .Select(ToViewModel);
 
             return Ok(allBooks);
         }
@@ -89,18 +89,25 @@ namespace LibraryService.Api.Books
         {
             if (!_bookService.Exists(id))
                 return NotFound($"The Book Id {id} does not exist!");
+            
             if (viewModel.WorkId != null && !_bookService.WorkExists(viewModel.WorkId))
                 return NotFound($"The Work Id {viewModel.WorkId} does not exist!");
-            foreach (BAWriteViewModel bookAuthor in viewModel.BookAuthors)
-                if (!_bookService.AuthorExists(bookAuthor.AuthorId))
-                    return NotFound($"The Author Id {bookAuthor.AuthorId} does not exist!");
+
+            var missingBookAuthor = viewModel
+                .BookAuthors
+                .FirstOrDefault(bookAuthor => !_bookService.AuthorExists(bookAuthor.AuthorId));
+
+            if (missingBookAuthor != null)
+            {
+                return NotFound($"The Author Id {missingBookAuthor.AuthorId} does not exist!");
+            }
 
             _bookService.Update(id, WriteModelFromWriteViewModel(viewModel));
 
             return Ok();
         }
 
-        private BookReadViewModel ToViewModel(Book book)
+        private static BookReadViewModel ToViewModel(Book book)
         {
             return new BookReadViewModel
             {
@@ -111,7 +118,7 @@ namespace LibraryService.Api.Books
                 WorkId = book.WorkId,
                 BookAuthors = book
                     .BookAuthors
-                    .Select(ba => new BAReadViewModel
+                    .Select(ba => new BookAuthorReadViewModel
                     {
                         AuthorId = ba.AuthorId,
                         AuthorRole = ba.AuthorRole
@@ -119,7 +126,7 @@ namespace LibraryService.Api.Books
             };
         }
 
-        private BookWriteModel WriteModelFromWriteViewModel(BookWriteViewModel viewModel)
+        private static BookWriteModel WriteModelFromWriteViewModel(BookWriteViewModel viewModel)
         {
             return new BookWriteModel()
             {
@@ -129,7 +136,7 @@ namespace LibraryService.Api.Books
                 WorkId = viewModel.WorkId,
                 BookAuthors = viewModel
                     .BookAuthors
-                    .Select(model => new BAWriteModel
+                    .Select(model => new BookAuthorWriteModel
                     {
                         AuthorId = model.AuthorId,
                         AuthorRole = model.AuthorRole

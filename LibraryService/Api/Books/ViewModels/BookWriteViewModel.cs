@@ -14,6 +14,6 @@ namespace LibraryService.Api.Books.ViewModels
         
         public int? WorkId { get; set; }
 
-        public List<BAWriteViewModel> BookAuthors { get; set; }
+        public List<BookAuthorWriteViewModel> BookAuthors { get; set; }
     }
 }

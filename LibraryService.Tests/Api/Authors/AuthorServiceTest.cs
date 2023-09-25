@@ -39,9 +39,12 @@ namespace LibraryService.Tests.Api.Authors
             var authors = service.GetAll();
 
             Assert.IsAssignableFrom<IEnumerable<Author>>(authors);
-            Assert.Equal("Name1", authors.First(a => a.Id == authorId1).Name);
-            Assert.Equal("Name2", authors.First(a => a.Id == authorId2).Name);
-            Assert.Equal("Name3", authors.First(a => a.Id == authorId3).Name);
+            
+            var enumerable = authors as Author[] ?? authors.ToArray();
+
+            Assert.Equal("Name1", enumerable.First(a => a.Id == authorId1).Name);
+            Assert.Equal("Name2", enumerable.First(a => a.Id == authorId2).Name);
+            Assert.Equal("Name3", enumerable.First(a => a.Id == authorId3).Name);
         }
 
         [Fact]

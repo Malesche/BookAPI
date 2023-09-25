@@ -32,11 +32,11 @@ namespace LibraryService.Api.Authors
         [HttpGet]
         public IActionResult GetAllBookAuthors()
         {
-            var allBookAuthors = _dbContext
+            var bookAuthors = _dbContext
                 .BookAuthor
                 .ToArray();
 
-            return Ok(allBookAuthors);
+            return Ok(bookAuthors);
         }
     }
 }

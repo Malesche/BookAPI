@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LibraryService.Api.Books.ViewModels
 {
-    public class BAWriteViewModel
+    public class BookAuthorWriteViewModel
     {
         [Required]
         public int AuthorId { get; set; }

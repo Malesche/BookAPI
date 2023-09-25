@@ -44,9 +44,9 @@ namespace LibraryService.Tests.Api.Authors
             var authorService = Substitute.For<IAuthorService>();
             authorService.GetAll().Returns(new List<Author>
             {
-                new Author() { Id = 1, Name = "Name1" },
-                new Author() { Id = 2, Name = "Name2" },
-                new Author() { Id = 3, Name = "Name3" }
+                new() { Id = 1, Name = "Name1" },
+                new() { Id = 2, Name = "Name2" },
+                new() { Id = 3, Name = "Name3" }
             });
             var controller = new AuthorsController(authorService);
 
@@ -112,7 +112,7 @@ namespace LibraryService.Tests.Api.Authors
         public void GetAuthorById_invalidId_ReturnsNotFound()
         {
             var authorService = Substitute.For<IAuthorService>();
-            authorService.Get(5).Returns(l => null);
+            authorService.Get(5).Returns(_ => null);
             var controller = new AuthorsController(authorService);
 
             var result = controller.GetAuthorById(5);

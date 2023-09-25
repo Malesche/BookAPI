@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryService
 {
-    public partial class Program
+    public class Program
     {
         public static void Main(string[] args)
         {

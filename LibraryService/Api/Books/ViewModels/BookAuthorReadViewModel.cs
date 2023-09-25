@@ -2,7 +2,7 @@
 
 namespace LibraryService.Api.Books.ViewModels
 {
-    public class BAReadViewModel
+    public class BookAuthorReadViewModel
     {
         public int AuthorId { get; set; }
 
