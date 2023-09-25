@@ -2,7 +2,6 @@
 using LibraryService.Api.Authors.ViewModels;
 using LibraryService.Persistence;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using NSubstitute;
 
 namespace LibraryService.Tests.Api.Authors
@@ -121,6 +120,52 @@ namespace LibraryService.Tests.Api.Authors
             Assert.IsType<NotFoundResult>(result);
         }
 
+        [Fact]
+        public void UpdateAuthor_validId_CallsService()
+        {
+            var authorService = Substitute.For<IAuthorService>();
+            authorService.Exists(5).Returns(true);
+            var controller = new AuthorsController(authorService);
+            
+            controller.UpdateAuthor(5, new AuthorWriteViewModel() { Name = "Name5" });
 
+            authorService.Received(1).Update(5, "Name5");
         }
+
+        [Fact]
+        public void UpdateAuthor_validId_ReturnsNoContent()
+        {
+            var authorService = Substitute.For<IAuthorService>();
+            authorService.Exists(5).Returns(true);
+            var controller = new AuthorsController(authorService);
+
+            var result = controller.UpdateAuthor(5, new AuthorWriteViewModel() { Name = "Name5" });
+
+            Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public void UpdateAuthor_invalidId_ReturnsNotFound()
+        {
+            var authorService = Substitute.For<IAuthorService>();
+            authorService.Exists(5).Returns(false);
+            var controller = new AuthorsController(authorService);
+
+            var result = controller.UpdateAuthor(5, new AuthorWriteViewModel() { Name = "Name5" });
+
+            Assert.IsType<NotFoundObjectResult>(result);
+        }
+
+        [Fact]
+        public void UpdateAuthor_invalidId_DoesNotCallUpdateService()
+        {
+            var authorService = Substitute.For<IAuthorService>();
+            authorService.Exists(5).Returns(false);
+            var controller = new AuthorsController(authorService);
+
+            controller.UpdateAuthor(5, new AuthorWriteViewModel() { Name = "Name5" });
+
+            authorService.DidNotReceive().Update(Arg.Any<int>(), Arg.Any<string>());
+        }
+    }
 }
