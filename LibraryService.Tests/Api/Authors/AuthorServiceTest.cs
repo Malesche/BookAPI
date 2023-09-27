@@ -20,7 +20,7 @@ namespace LibraryService.Tests.Api.Authors
         public void Update_SavesToDb()
         {
             var authorId = CreateAuthor("NameBeforeUpdate");
-            AuthorService service = new AuthorService(DbContext);
+            var service = new AuthorService(DbContext);
             
             service.Update(authorId, "NameForUpdate");
 
@@ -36,15 +36,13 @@ namespace LibraryService.Tests.Api.Authors
             var authorId3 = CreateAuthor("Name3");
             AuthorService service = new AuthorService(DbContext);
 
-            var authors = service.GetAll();
+            var getAllResult = service.GetAll();
 
-            Assert.IsAssignableFrom<IEnumerable<Author>>(authors);
-            
-            var enumerable = authors as Author[] ?? authors.ToArray();
-
-            Assert.Equal("Name1", enumerable.First(a => a.Id == authorId1).Name);
-            Assert.Equal("Name2", enumerable.First(a => a.Id == authorId2).Name);
-            Assert.Equal("Name3", enumerable.First(a => a.Id == authorId3).Name);
+            Assert.IsAssignableFrom<IEnumerable<Author>>(getAllResult);
+            var authors = getAllResult as Author[] ?? getAllResult.ToArray();
+            Assert.Equal("Name1", authors.First(a => a.Id == authorId1).Name);
+            Assert.Equal("Name2", authors.First(a => a.Id == authorId2).Name);
+            Assert.Equal("Name3", authors.First(a => a.Id == authorId3).Name);
         }
 
         [Fact]
