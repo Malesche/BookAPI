@@ -13,11 +13,8 @@ namespace LibraryService.Tests.Api.Authors
         {
             var authorService = Substitute.For<IAuthorService>();
             var controller = new AuthorsController(authorService);
-
-            var writeViewModel = new AuthorWriteViewModel
-            {
-                Name = "Test"
-            };
+            var writeViewModel = new AuthorWriteViewModel { Name = "Test" };
+            
             var result = controller.CreateAuthor(writeViewModel);
 
             Assert.IsType<NoContentResult>(result);
@@ -28,11 +25,8 @@ namespace LibraryService.Tests.Api.Authors
         {
             var authorService = Substitute.For<IAuthorService>();
             var controller = new AuthorsController(authorService);
+            var writeViewModel = new AuthorWriteViewModel { Name = "Test" };
 
-            var writeViewModel = new AuthorWriteViewModel
-            {
-                Name = "Test"
-            };
             controller.CreateAuthor(writeViewModel);
 
             authorService.Received(1).Create("Test");
@@ -43,11 +37,11 @@ namespace LibraryService.Tests.Api.Authors
         {
             var authorService = Substitute.For<IAuthorService>();
             authorService.GetAll().Returns(new List<Author>
-            {
-                new() { Id = 1, Name = "Name1" },
-                new() { Id = 2, Name = "Name2" },
-                new() { Id = 3, Name = "Name3" }
-            });
+                {
+                    new() { Id = 1, Name = "Name1" },
+                    new() { Id = 2, Name = "Name2" },
+                    new() { Id = 3, Name = "Name3" }
+                });
             var controller = new AuthorsController(authorService);
 
             var result = controller.GetAllAuthors();
@@ -56,7 +50,6 @@ namespace LibraryService.Tests.Api.Authors
             var okObjectResult = (OkObjectResult)result;
             var model = okObjectResult.Value;
             Assert.IsAssignableFrom<IList<AuthorReadViewModel>>(model);
-
             var viewModelCollection = ((IList<AuthorReadViewModel>)model);
             Assert.Equal(3, viewModelCollection.Count);
             Assert.Equal(1, viewModelCollection[0].Id);
@@ -82,7 +75,7 @@ namespace LibraryService.Tests.Api.Authors
         public void GetAuthorById_validId_ReturnsValidViewModel()
         {
             var authorService = Substitute.For<IAuthorService>();
-            authorService.Get(5).Returns(new Author(){ Id = 5, Name = "Name5" });
+            authorService.Get(5).Returns(new Author { Id = 5, Name = "Name5" });
             var controller = new AuthorsController(authorService);
 
             var result = controller.GetAuthorById(5);
@@ -91,7 +84,6 @@ namespace LibraryService.Tests.Api.Authors
             var okObjectResult = (OkObjectResult)result;
             var model = (AuthorReadViewModel)okObjectResult.Value;
             Assert.IsAssignableFrom<AuthorReadViewModel>(model);
-
             Assert.Equal(5, model.Id);
             Assert.Equal("Name5", model.Name);
         }
@@ -100,7 +92,7 @@ namespace LibraryService.Tests.Api.Authors
         public void GetAuthorById_validId_CallsService()
         {
             var authorService = Substitute.For<IAuthorService>();
-            authorService.Get(5).Returns(new Author() { Id = 5, Name = "Name5" });
+            authorService.Get(5).Returns(new Author { Id = 5, Name = "Name5" });
             var controller = new AuthorsController(authorService);
 
             controller.GetAuthorById(5);
@@ -127,7 +119,7 @@ namespace LibraryService.Tests.Api.Authors
             authorService.Exists(5).Returns(true);
             var controller = new AuthorsController(authorService);
             
-            controller.UpdateAuthor(5, new AuthorWriteViewModel() { Name = "Name5" });
+            controller.UpdateAuthor(5, new AuthorWriteViewModel { Name = "Name5" });
 
             authorService.Received(1).Update(5, "Name5");
         }

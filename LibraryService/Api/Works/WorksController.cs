@@ -8,9 +8,9 @@ namespace LibraryService.Api.Works
     [ApiController]
     public class WorksController : ControllerBase
     {
-        private readonly WorkService _workService;
+        private readonly IWorkService _workService;
 
-        public WorksController(WorkService workService)
+        public WorksController(IWorkService workService)
         {
             _workService = workService;
         }
@@ -27,7 +27,8 @@ namespace LibraryService.Api.Works
         {
             var allWorks = _workService
                 .GetAll()
-                .Select(work => ToViewModel(work));
+                .Select(ToViewModel)
+                .ToArray();
 
             return Ok(allWorks);
         }

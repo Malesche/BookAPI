@@ -9,9 +9,9 @@ namespace LibraryService.Api.Books
     [ApiController]
     public class BooksController : ControllerBase
     {
-        private readonly BookService _bookService;
+        private readonly IBookService _bookService;
 
-        public BooksController(BookService bookService)
+        public BooksController(IBookService bookService)
         {
             _bookService = bookService;
         }
@@ -68,7 +68,8 @@ namespace LibraryService.Api.Books
         {
             var allBooks = _bookService
                 .GetAll()
-                .Select(ToViewModel);
+                .Select(ToViewModel)
+                .ToArray();
 
             return Ok(allBooks);
         }
@@ -104,7 +105,7 @@ namespace LibraryService.Api.Books
 
             _bookService.Update(id, WriteModelFromWriteViewModel(viewModel));
 
-            return Ok();
+            return NoContent();
         }
 
         private static BookReadViewModel ToViewModel(Book book)

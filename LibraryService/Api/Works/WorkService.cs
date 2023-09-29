@@ -2,7 +2,20 @@
 
 namespace LibraryService.Api.Works
 {
-    public class WorkService
+    public interface IWorkService
+    {
+        public void Create(string title);
+
+        public void Update(int id, string title);
+
+        public IEnumerable<Work> GetAll();
+
+        public Work Get(int id);
+
+        public bool Exists(int id);
+    }
+
+    public class WorkService : IWorkService
     {
         private readonly LibraryDbContext _dbContext;
 

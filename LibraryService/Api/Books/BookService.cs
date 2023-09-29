@@ -4,7 +4,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryService.Api.Books
 {
-    public class BookService
+    public interface IBookService
+    {
+        public void Create(BookWriteModel model);
+
+        public void Update(int id, BookWriteModel model);
+
+        public void AddBookAuthor(int bookId, int authorId, AuthorRole? authorRole);
+
+        public void RemoveBookAuthorInRole(int bookId, int authorId, AuthorRole? authorRole);
+        
+        public void RemoveBookAuthor(int bookId, int authorId);
+        
+        public IEnumerable<Book> GetAll();
+        
+        public Book Get(int id);
+        
+        public bool Exists(int id);
+        
+        public bool WorkExists(int? id);
+        
+        public bool AuthorExists(int? id);
+        
+        public bool BookAuthorRoleExists(int bookId, int authorId, AuthorRole? authorRole);
+    }
+
+    public class BookService : IBookService
     {
         private readonly LibraryDbContext _dbContext;
 
@@ -19,6 +44,19 @@ namespace LibraryService.Api.Books
             FillBook(book, model);
 
             _dbContext.Books.Add(book);
+            _dbContext.SaveChanges();
+        }
+
+        public void Update(int id, BookWriteModel model)
+        {
+            var book = _dbContext
+                .Books
+                .Include(b => b.BookAuthors)
+                .First(b => b.Id == id);
+
+            book.BookAuthors.Clear();
+            FillBook(book, model);
+
             _dbContext.SaveChanges();
         }
 
@@ -48,19 +86,6 @@ namespace LibraryService.Api.Books
             _dbContext.BookAuthor
                 .RemoveRange(_dbContext.BookAuthor
                     .Where(ba => ba.BookId == bookId && ba.AuthorId == authorId));
-            _dbContext.SaveChanges();
-        }
-
-        public void Update(int id, BookWriteModel model)
-        {
-            var book = _dbContext
-                .Books
-                .Include(b => b.BookAuthors)
-                .First(b => b.Id == id);
-
-            book.BookAuthors.Clear();
-            FillBook(book, model);
-
             _dbContext.SaveChanges();
         }
 

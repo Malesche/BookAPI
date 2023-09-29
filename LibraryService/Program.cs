@@ -21,8 +21,8 @@ namespace LibraryService
                 options => options
                 .UseSqlServer(connectionString));
 
-            builder.Services.AddScoped<WorkService>();
-            builder.Services.AddScoped<BookService>();
+            builder.Services.AddScoped<IWorkService, WorkService>();
+            builder.Services.AddScoped<IBookService, BookService>();
             builder.Services.AddScoped<IAuthorService, AuthorService>();
 
             var app = builder.Build();
