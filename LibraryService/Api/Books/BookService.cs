@@ -25,7 +25,9 @@ namespace LibraryService.Api.Books
         public bool WorkExists(int? id);
         
         public bool AuthorExists(int? id);
-        
+
+        public bool BookAuthorExists(int bookId, int authorId);
+
         public bool BookAuthorRoleExists(int bookId, int authorId, AuthorRole? authorRole);
     }
 
@@ -126,6 +128,13 @@ namespace LibraryService.Api.Books
             return _dbContext
                 .Authors
                 .Any(a => a.Id == id);
+        }
+
+        public bool BookAuthorExists(int bookId, int authorId)
+        {
+            return _dbContext
+                .BookAuthor
+                .Any(a => a.BookId == bookId && a.AuthorId == authorId);
         }
 
         public bool BookAuthorRoleExists(int bookId, int authorId, AuthorRole? authorRole)

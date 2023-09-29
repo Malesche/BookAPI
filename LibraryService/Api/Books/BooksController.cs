@@ -51,12 +51,14 @@ namespace LibraryService.Api.Books
         {
             if (role is null)
             {
+                if (!_bookService.BookAuthorExists(bookId, authorId))
+                    return NotFound($"Author {authorId} is not saved for Book {bookId}");
                 _bookService.RemoveBookAuthor(bookId, authorId);
             }
             else
             {
                 if (!_bookService.BookAuthorRoleExists(bookId, authorId, role))
-                    return Conflict($"Author {authorId} is not saved in role {role} for Book {bookId}");
+                    return NotFound($"Author {authorId} is not saved in role {role} for Book {bookId}");
                 _bookService.RemoveBookAuthorInRole(bookId, authorId, role);
             }
 

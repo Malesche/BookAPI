@@ -278,15 +278,101 @@ namespace LibraryService.Tests.Api.Books
         }
 
         [Fact]
-        public void RemoveAuthor_Returns()
+        public void RemoveAuthor_RoleNotNullAndBookAuthorRoleExist_ReturnsNoContent()
         {
+            var bookService = Substitute.For<IBookService>();
+            bookService.BookAuthorRoleExists(1, 1, AuthorRole.Author).Returns(true);
+            var controller = new BooksController(bookService);
 
+            var result = controller.RemoveAuthor(1, 1, AuthorRole.Author);
+
+            Assert.IsType<NoContentResult>(result);
         }
 
         [Fact]
-        public void RemoveAuthor_Calls()
+        public void RemoveAuthor_RoleNullAndBookAuthorExists_ReturnsNoContent()
         {
+            var bookService = Substitute.For<IBookService>();
+            bookService.BookAuthorExists(1, 1).Returns(true);
+            var controller = new BooksController(bookService);
 
+            var result = controller.RemoveAuthor(1, 1);
+
+            Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public void RemoveAuthor_RoleNullAndBookAuthorInvalid_ReturnsNotFound()
+        {
+            var bookService = Substitute.For<IBookService>();
+            bookService.BookAuthorExists(1, 1).Returns(false);
+            var controller = new BooksController(bookService);
+
+            var result = controller.RemoveAuthor(1, 1);
+
+            Assert.IsType<NotFoundObjectResult>(result);
+        }
+
+        [Fact]
+        public void RemoveAuthor_RoleNotNullAndBookAuthorRoleInvalid_ReturnsNotFound()
+        {
+            var bookService = Substitute.For<IBookService>();
+            bookService.BookAuthorRoleExists(1, 1, AuthorRole.Author).Returns(false);
+            var controller = new BooksController(bookService);
+
+            var result = controller.RemoveAuthor(1, 1, AuthorRole.Author);
+
+            Assert.IsType<NotFoundObjectResult>(result);
+        }
+
+        [Fact]
+        public void RemoveAuthor_RoleNotNullAndBookAuthorRoleExist_CallsServiceRemoveBookAuthorInRole()
+        {
+            var bookService = Substitute.For<IBookService>();
+            bookService.BookAuthorRoleExists(1, 1, AuthorRole.Author).Returns(true);
+            var controller = new BooksController(bookService);
+
+            controller.RemoveAuthor(1, 1, AuthorRole.Author);
+
+            bookService.Received(1).RemoveBookAuthorInRole(1, 1, AuthorRole.Author);
+        }
+
+        [Fact]
+        public void RemoveAuthor_RoleNullAndBookAuthorExists_CallsServiceRemoveBookAuthor()
+        {
+            var bookService = Substitute.For<IBookService>();
+            bookService.BookAuthorExists(1, 1).Returns(true);
+            var controller = new BooksController(bookService);
+
+            controller.RemoveAuthor(1, 1);
+
+            bookService.Received(1).RemoveBookAuthor(1, 1);
+        }
+
+        [Fact]
+        public void RemoveAuthor_RoleNullAndBookAuthorInvalid_DoesNotCallServiceRemoveBookAuthorOrInRole()
+        {
+            var bookService = Substitute.For<IBookService>();
+            bookService.BookAuthorExists(1, 1).Returns(false);
+            var controller = new BooksController(bookService);
+
+            controller.RemoveAuthor(1, 1);
+
+            bookService.DidNotReceive().RemoveBookAuthorInRole(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<AuthorRole>());
+            bookService.DidNotReceive().RemoveBookAuthor(Arg.Any<int>(), Arg.Any<int>());
+        }
+
+        [Fact]
+        public void RemoveAuthor_RoleNotNullAndBookAuthorRoleInvalid_DoesNotCallServiceRemoveBookAuthorOrInRole()
+        {
+            var bookService = Substitute.For<IBookService>();
+            bookService.BookAuthorRoleExists(1, 1, AuthorRole.Author).Returns(false);
+            var controller = new BooksController(bookService);
+
+            controller.RemoveAuthor(1, 1, AuthorRole.Author);
+
+            bookService.DidNotReceive().RemoveBookAuthorInRole(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<AuthorRole>());
+            bookService.DidNotReceive().RemoveBookAuthor(Arg.Any<int>(), Arg.Any<int>());
         }
 
         [Fact]
