@@ -9,6 +9,16 @@
         public string Format { get; set; }
 
         public string Language { get; set; }
+        
+        public string Isbn { get; set; }
+        
+        public string Isbn13 { get; set; }
+        
+        public string Description { get; set; }
+        
+        public DateTimeOffset PubDate { get; set; }
+        
+        public string CoverUrl { get; set; }
 
         public ICollection<BookAuthor> BookAuthors { get; set; }
 
