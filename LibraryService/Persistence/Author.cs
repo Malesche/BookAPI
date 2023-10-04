@@ -8,9 +8,9 @@
 
         public string Biography { get; set; }
 
-        public DateTimeOffset BirthDate { get; set; }
+        public DateTimeOffset? BirthDate { get; set; }
 
-        public DateTimeOffset DeathDate { get; set; }
+        public DateTimeOffset? DeathDate { get; set; }
 
         public ICollection<BookAuthor> BookAuthor { get; set; }
         
