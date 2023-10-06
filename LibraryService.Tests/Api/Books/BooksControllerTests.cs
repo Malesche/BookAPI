@@ -22,6 +22,11 @@ namespace LibraryService.Tests.Api.Books
                 Title = "BookTitle",
                 Format = "format",
                 Language = "language",
+                Isbn = "3902866063",
+                Isbn13 = "9783902866066",
+                Description = "describing_describing",
+                PubDate = new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)),
+                CoverUrl = "someUrl",
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
@@ -48,6 +53,11 @@ namespace LibraryService.Tests.Api.Books
                 Title = "BookTitle",
                 Format = "format",
                 Language = "language",
+                Isbn = "3902866063",
+                Isbn13 = "9783902866066",
+                Description = "describing_describing",
+                PubDate = new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)),
+                CoverUrl = "someUrl",
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
@@ -74,6 +84,11 @@ namespace LibraryService.Tests.Api.Books
                 Title = "BookTitle",
                 Format = "format",
                 Language = "language",
+                Isbn = "3902866063",
+                Isbn13 = "9783902866066",
+                Description = "describing_describing",
+                PubDate = new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)),
+                CoverUrl = "someUrl",
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
@@ -100,6 +115,11 @@ namespace LibraryService.Tests.Api.Books
                 Title = "BookTitle",
                 Format = "format",
                 Language = "language",
+                Isbn = "3902866063",
+                Isbn13 = "9783902866066",
+                Description = "describing_describing",
+                PubDate = new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)),
+                CoverUrl = "someUrl",
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
@@ -110,7 +130,23 @@ namespace LibraryService.Tests.Api.Books
 
             controller.CreateBook(writeViewModel);
 
-            bookService.Received(1).Create(Arg.Any<BookWriteModel>());
+            bookService
+                .Received(1)
+                .Create(
+                    Arg.Is<BookWriteModel>(model => 
+                        model.Title == "BookTitle" 
+                        && model.Format == "format"
+                        && model.Language == "language"
+                        && model.Isbn == "3902866063"
+                        && model.Isbn13 == "9783902866066"
+                        && model.Description == "describing_describing"
+                        && model.PubDate == new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7))
+                        && model.CoverUrl == "someUrl"
+                        && model.WorkId == 3
+                        && model.BookAuthors[0].AuthorId == 1
+                        && model.BookAuthors[1].AuthorId == 2
+                        && model.BookAuthors[0].AuthorRole == AuthorRole.Translator
+                        && model.BookAuthors[1].AuthorRole == AuthorRole.Narrator));
         }
 
         [Fact]
@@ -126,6 +162,11 @@ namespace LibraryService.Tests.Api.Books
                 Title = "BookTitle",
                 Format = "format",
                 Language = "language",
+                Isbn = "3902866063",
+                Isbn13 = "9783902866066",
+                Description = "describing_describing",
+                PubDate = new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)),
+                CoverUrl = "someUrl",
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
@@ -152,6 +193,11 @@ namespace LibraryService.Tests.Api.Books
                 Title = "BookTitle",
                 Format = "format",
                 Language = "language",
+                Isbn = "3902866063",
+                Isbn13 = "9783902866066",
+                Description = "describing_describing",
+                PubDate = new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)),
+                CoverUrl = "someUrl",
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
@@ -385,9 +431,14 @@ namespace LibraryService.Tests.Api.Books
                     {
                         Id = 1,
                         Title = "Title1",
-                        Format = "format",
-                        Language = "language",
-                        WorkId = 3,
+                        Format = "format1",
+                        Language = "language1",
+                        WorkId = 1,
+                        Isbn = "1",
+                        Isbn13 = "111",
+                        Description = "describing_describing1",
+                        PubDate = new DateTimeOffset(2001, 1, 1, 7, 0, 0, TimeSpan.FromHours(-7)),
+                        CoverUrl = "someUrl1",
                         BookAuthors = new List<BookAuthor>
                         {
                             new(){AuthorId = 1, AuthorRole = AuthorRole.Translator},
@@ -398,9 +449,14 @@ namespace LibraryService.Tests.Api.Books
                     {
                         Id = 2,
                         Title = "Title2",
-                        Format = "format",
-                        Language = "language",
-                        WorkId = 3,
+                        Format = "format2",
+                        Language = "language2",
+                        Isbn = "2",
+                        Isbn13 = "222",
+                        Description = "describing_describing2",
+                        PubDate = new DateTimeOffset(2002, 2, 2, 7, 0, 0, TimeSpan.FromHours(-7)),
+                        CoverUrl = "someUrl2",
+                        WorkId = 2,
                         BookAuthors = new List<BookAuthor>
                         {
                             new(){AuthorId = 3, AuthorRole = AuthorRole.Editor},
@@ -411,8 +467,13 @@ namespace LibraryService.Tests.Api.Books
                     {
                         Id = 3,
                         Title = "Title3",
-                        Format = "format",
-                        Language = "language",
+                        Format = "format3",
+                        Language = "language3",
+                        Isbn = "3",
+                        Isbn13 = "333",
+                        Description = "describing_describing3",
+                        PubDate = new DateTimeOffset(2003, 3, 3, 7, 0, 0, TimeSpan.FromHours(-7)),
+                        CoverUrl = "someUrl3",
                         WorkId = 3,
                         BookAuthors = new List<BookAuthor>
                         {
@@ -426,9 +487,40 @@ namespace LibraryService.Tests.Api.Books
 
             Assert.IsType<OkObjectResult>(result);
             var okObjectResult = (OkObjectResult)result;
-            var model = okObjectResult.Value;
-            Assert.IsAssignableFrom<IList<BookReadViewModel>>(model);
-            var bookList = (IList<BookReadViewModel>)model;
+            var value = okObjectResult.Value;
+            Assert.IsAssignableFrom<IList<BookReadViewModel>>(value);
+            var bookList = (IList<BookReadViewModel>)value;
+
+            Assert.Contains(bookList, model =>
+                model.Title == "Title1"
+                && model.Format == "format1"
+                && model.Language == "language1"
+                && model.Isbn == "1"
+                && model.Isbn13 == "111"
+                && model.Description == "describing_describing1"
+                && model.PubDate == new DateTimeOffset(2001, 1, 1, 7, 0, 0, TimeSpan.FromHours(-7))
+                && model.CoverUrl == "someUrl1"
+                && model.WorkId == 1);
+            Assert.Contains(bookList, model =>
+                model.Title == "Title2"
+                && model.Format == "format2"
+                && model.Language == "language2"
+                && model.Isbn == "2"
+                && model.Isbn13 == "222"
+                && model.Description == "describing_describing2"
+                && model.PubDate == new DateTimeOffset(2002, 2, 2, 7, 0, 0, TimeSpan.FromHours(-7))
+                && model.CoverUrl == "someUrl2"
+                && model.WorkId == 2);
+            Assert.Contains(bookList, model =>
+                model.Title == "Title3"
+                && model.Format == "format3"
+                && model.Language == "language3"
+                && model.Isbn == "3"
+                && model.Isbn13 == "333"
+                && model.Description == "describing_describing3"
+                && model.PubDate == new DateTimeOffset(2003, 3, 3, 7, 0, 0, TimeSpan.FromHours(-7))
+                && model.CoverUrl == "someUrl3"
+                && model.WorkId == 3);
             var book1 = bookList[0];
             var book2 = bookList[1];
             var book3 = bookList[2];
@@ -471,6 +563,11 @@ namespace LibraryService.Tests.Api.Books
                 Title = "BookTitle",
                 Format = "format",
                 Language = "language",
+                Isbn = "3902866063",
+                Isbn13 = "9783902866066",
+                Description = "describing_describing",
+                PubDate = new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)),
+                CoverUrl = "someUrl",
                 WorkId = 3,
                 BookAuthors = new List<BookAuthor>
                 {
@@ -490,6 +587,11 @@ namespace LibraryService.Tests.Api.Books
             Assert.Equal("BookTitle", model.Title);
             Assert.Equal("format", model.Format);
             Assert.Equal("language", model.Language);
+            Assert.Equal("3902866063", model.Isbn);
+            Assert.Equal("9783902866066", model.Isbn13);
+            Assert.Equal("describing_describing", model.Description);
+            Assert.Equal(new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)), model.PubDate);
+            Assert.Equal("someUrl", model.CoverUrl);
             Assert.Equal(3, model.WorkId);
             Assert.Contains(model.BookAuthors, ba => ba.AuthorId == 1 && ba.AuthorRole == AuthorRole.Translator);
             Assert.Contains(model.BookAuthors, ba => ba.AuthorId == 2 && ba.AuthorRole == AuthorRole.Narrator);
@@ -506,6 +608,11 @@ namespace LibraryService.Tests.Api.Books
                 Title = "BookTitle",
                 Format = "format",
                 Language = "language",
+                Isbn = "3902866063",
+                Isbn13 = "9783902866066",
+                Description = "describing_describing",
+                PubDate = new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)),
+                CoverUrl = "someUrl",
                 WorkId = 3,
                 BookAuthors = new List<BookAuthor>
                 {
@@ -559,6 +666,11 @@ namespace LibraryService.Tests.Api.Books
                 Title = "BookTitle",
                 Format = "format",
                 Language = "language",
+                Isbn = "3902866063",
+                Isbn13 = "9783902866066",
+                Description = "describing_describing",
+                PubDate = new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)),
+                CoverUrl = "someUrl",
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
@@ -586,6 +698,11 @@ namespace LibraryService.Tests.Api.Books
                 Title = "BookTitle",
                 Format = "format",
                 Language = "language",
+                Isbn = "3902866063",
+                Isbn13 = "9783902866066",
+                Description = "describing_describing",
+                PubDate = new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)),
+                CoverUrl = "someUrl",
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
@@ -613,6 +730,11 @@ namespace LibraryService.Tests.Api.Books
                 Title = "BookTitle",
                 Format = "format",
                 Language = "language",
+                Isbn = "3902866063",
+                Isbn13 = "9783902866066",
+                Description = "describing_describing",
+                PubDate = new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)),
+                CoverUrl = "someUrl",
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
@@ -640,6 +762,11 @@ namespace LibraryService.Tests.Api.Books
                 Title = "BookTitle",
                 Format = "format",
                 Language = "language",
+                Isbn = "3902866063",
+                Isbn13 = "9783902866066",
+                Description = "describing_describing",
+                PubDate = new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)),
+                CoverUrl = "someUrl",
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
@@ -667,6 +794,11 @@ namespace LibraryService.Tests.Api.Books
                 Title = "BookTitle",
                 Format = "format",
                 Language = "language",
+                Isbn = "3902866063",
+                Isbn13 = "9783902866066",
+                Description = "describing_describing",
+                PubDate = new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)),
+                CoverUrl = "someUrl",
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
@@ -677,7 +809,20 @@ namespace LibraryService.Tests.Api.Books
 
             controller.UpdateBook(5, writeViewModel);
 
-            bookService.Received(1).Update(5, Arg.Any<BookWriteModel>());
+            bookService.Received(1).Update(5, Arg.Is<BookWriteModel>(model =>
+                model.Title == "BookTitle"
+                && model.Format == "format"
+                && model.Language == "language"
+                && model.Isbn == "3902866063"
+                && model.Isbn13 == "9783902866066"
+                && model.Description == "describing_describing"
+                && model.PubDate == new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7))
+                && model.CoverUrl == "someUrl"
+                && model.WorkId == 3
+                && model.BookAuthors[0].AuthorId == 1
+                && model.BookAuthors[1].AuthorId == 2
+                && model.BookAuthors[0].AuthorRole == AuthorRole.Translator
+                && model.BookAuthors[1].AuthorRole == AuthorRole.Narrator));
         }
 
         [Fact]
@@ -694,6 +839,11 @@ namespace LibraryService.Tests.Api.Books
                 Title = "BookTitle",
                 Format = "format",
                 Language = "language",
+                Isbn = "3902866063",
+                Isbn13 = "9783902866066",
+                Description = "describing_describing",
+                PubDate = new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)),
+                CoverUrl = "someUrl",
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
@@ -721,6 +871,11 @@ namespace LibraryService.Tests.Api.Books
                 Title = "BookTitle",
                 Format = "format",
                 Language = "language",
+                Isbn = "3902866063",
+                Isbn13 = "9783902866066",
+                Description = "describing_describing",
+                PubDate = new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)),
+                CoverUrl = "someUrl",
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
@@ -748,6 +903,11 @@ namespace LibraryService.Tests.Api.Books
                 Title = "BookTitle",
                 Format = "format",
                 Language = "language",
+                Isbn = "3902866063",
+                Isbn13 = "9783902866066",
+                Description = "describing_describing",
+                PubDate = new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)),
+                CoverUrl = "someUrl",
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {

@@ -1,12 +1,13 @@
-﻿using LibraryService.Persistence;
+﻿using LibraryService.Api.Authors.Models;
+using LibraryService.Persistence;
 
 namespace LibraryService.Api.Authors
 {
     public interface IAuthorService
     {
-        void Create(string name);
+        void Create(AuthorWriteModel model);
 
-        void Update(int id, string name);
+        void Update(int id, AuthorWriteModel model);
 
         IEnumerable<Author> GetAll();
 
@@ -24,21 +25,27 @@ namespace LibraryService.Api.Authors
             _dbContext = dbContext;
         }
 
-        public void Create(string name)
+        public void Create(AuthorWriteModel model)
         {
             var author = new Author
             {
-                Name = name
+                Name = model.Name,
+                Biography = model.Biography,
+                BirthDate = model.BirthDate,
+                DeathDate = model.DeathDate
             };
 
             _dbContext.Authors.Add(author);
             _dbContext.SaveChanges();
         }
 
-        public void Update(int id, string name)
+        public void Update(int id, AuthorWriteModel model)
         {
             var author = _dbContext.Authors.First(a => a.Id == id);
-            author.Name = name;
+            author.Name = model.Name;
+            author.Biography = model.Biography;
+            author.BirthDate = model.BirthDate;
+            author.DeathDate = model.DeathDate;
 
             _dbContext.SaveChanges();
         }

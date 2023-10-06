@@ -149,6 +149,11 @@ namespace LibraryService.Api.Books
             book.Title = model.Title;
             book.Format = model.Format;
             book.Language = model.Language;
+            book.Isbn = model.Isbn;
+            book.Isbn13 = model.Isbn13;
+            book.Description = model.Description;
+            book.PubDate = model.PubDate;
+            book.CoverUrl = model.CoverUrl;
             book.WorkId = model.WorkId;
             book.BookAuthors = model
                 .BookAuthors

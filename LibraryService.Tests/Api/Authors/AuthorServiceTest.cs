@@ -1,4 +1,5 @@
 ﻿using LibraryService.Api.Authors;
+using LibraryService.Api.Authors.Models;
 using LibraryService.Persistence;
 
 namespace LibraryService.Tests.Api.Authors
@@ -9,51 +10,93 @@ namespace LibraryService.Tests.Api.Authors
         public void Create_SavesToDb()
         {
             var service = new AuthorService(DbContext);
+            var authorWriteModel = new AuthorWriteModel { 
+                Name = "George Eliot", 
+                Biography = "She was very wonderful!", 
+                BirthDate = new DateTimeOffset(1819, 11, 22, 7, 0, 0, TimeSpan.FromHours(-7)), 
+                DeathDate = new DateTimeOffset(1880, 12, 22, 7, 0, 0, TimeSpan.FromHours(-7))
+            };
 
-            service.Create("NameForCreate");
+            service.Create(authorWriteModel);
 
             var author = DbContext.Authors.Single();
-            Assert.Equal("NameForCreate", author.Name);
+            Assert.Equal("George Eliot", author.Name);
+            Assert.Equal("She was very wonderful!", author.Biography);
+            Assert.Equal(new DateTimeOffset(1819, 11, 22, 7, 0, 0, TimeSpan.FromHours(-7)), author.BirthDate);
+            Assert.Equal(new DateTimeOffset(1880, 12, 22, 7, 0, 0, TimeSpan.FromHours(-7)), author.DeathDate);
         }
 
         [Fact]
         public void Update_SavesToDb()
         {
-            var authorId = CreateAuthor("NameBeforeUpdate");
+            var authorId = CreateAuthor("Mary Ann Evans", null, null, null);
             var service = new AuthorService(DbContext);
-            
-            service.Update(authorId, "NameForUpdate");
+            var birthDate = new DateTimeOffset(1819, 11, 22, 7, 0, 0, TimeSpan.FromHours(-7));
+            var deathDate = new DateTimeOffset(1880, 12, 22, 7, 0, 0, TimeSpan.FromHours(-7));
+            var authorWriteModel = new AuthorWriteModel
+            {
+                Name = "Mary Ann Evans Lewes",
+                Biography = "She had a family.",
+                BirthDate = birthDate,
+                DeathDate = deathDate
+            };
+
+            service.Update(authorId, authorWriteModel);
 
             var author = DbContext.Authors.Single();           
-            Assert.Equal("NameForUpdate", author.Name);
+            Assert.Equal("Mary Ann Evans Lewes", author.Name);
+            Assert.Equal("She had a family.", author.Biography);
+            Assert.Equal(new DateTimeOffset(1819, 11, 22, 7, 0, 0, TimeSpan.FromHours(-7)), author.BirthDate);
+            Assert.Equal(new DateTimeOffset(1880, 12, 22, 7, 0, 0, TimeSpan.FromHours(-7)), author.DeathDate);
         }
 
         [Fact]
         public void GetAll_ReturnsAllAuthors()
         {
-            var authorId1 = CreateAuthor("Name1");
-            var authorId2 = CreateAuthor("Name2");
-            var authorId3 = CreateAuthor("Name3");
+            var birthDate1 = new DateTimeOffset(1819, 11, 22, 7, 0, 0, TimeSpan.FromHours(-7));
+            var deathDate1 = new DateTimeOffset(1880, 12, 22, 7, 0, 0, TimeSpan.FromHours(-7)); 
+            var birthDate2 = new DateTimeOffset(819, 1, 2, 7, 0, 0, TimeSpan.FromHours(-7));
+            var deathDate2 = new DateTimeOffset(880, 2, 2, 7, 0, 0, TimeSpan.FromHours(-7));
+            var authorId1 = CreateAuthor("Name1", "bio1", birthDate1, deathDate1);
+            var authorId2 = CreateAuthor("Name2", "bio2", birthDate2, deathDate2);
+            var authorId3 = CreateAuthor("Name3", "bio3", birthDate1, deathDate1);
             AuthorService service = new AuthorService(DbContext);
 
             var getAllResult = service.GetAll();
 
             Assert.IsAssignableFrom<IEnumerable<Author>>(getAllResult);
             var authors = getAllResult as Author[] ?? getAllResult.ToArray();
-            Assert.Equal("Name1", authors.First(a => a.Id == authorId1).Name);
-            Assert.Equal("Name2", authors.First(a => a.Id == authorId2).Name);
-            Assert.Equal("Name3", authors.First(a => a.Id == authorId3).Name);
+            var author1 = authors.First(a => a.Id == authorId1);
+            var author2 = authors.First(a => a.Id == authorId2);
+            var author3 = authors.First(a => a.Id == authorId3);
+            Assert.Equal("Name1", author1.Name);
+            Assert.Equal("Name2", author2.Name);
+            Assert.Equal("Name3", author3.Name);
+            Assert.Equal("bio1", author1.Biography);
+            Assert.Equal("bio2", author2.Biography);
+            Assert.Equal("bio3", author3.Biography);
+            Assert.Equal(birthDate1, author1.BirthDate);
+            Assert.Equal(birthDate2, author2.BirthDate);
+            Assert.Equal(birthDate1, author3.BirthDate);
+            Assert.Equal(deathDate1, author1.DeathDate);
+            Assert.Equal(deathDate2, author2.DeathDate);
+            Assert.Equal(deathDate1, author3.DeathDate);
         }
 
         [Fact]
         public void Get_validId_ReturnsAuthor()
         {
-            var authorId = CreateAuthor("AuthorName");
+            var birthDate = new DateTimeOffset(1819, 11, 22, 7, 0, 0, TimeSpan.FromHours(-7));
+            var deathDate = new DateTimeOffset(1880, 12, 22, 7, 0, 0, TimeSpan.FromHours(-7));
+            var authorId = CreateAuthor("AuthorName", "someBiography", birthDate, deathDate);
             AuthorService service = new AuthorService(DbContext);
 
             var author = service.Get(authorId);
 
             Assert.Equal("AuthorName", author.Name);
+            Assert.Equal("someBiography", author.Biography);
+            Assert.Equal(birthDate, author.BirthDate);
+            Assert.Equal(deathDate, author.DeathDate);
         }
 
         [Fact]
@@ -69,7 +112,7 @@ namespace LibraryService.Tests.Api.Authors
         [Fact]
         public void Exists_validId_ReturnsTrue()
         {
-            var authorId = CreateAuthor("AuthorName");
+            var authorId = CreateAuthor("AuthorName", "someBiography", null, null);
             AuthorService service = new AuthorService(DbContext);
 
             var exists = service.Exists(authorId);
@@ -87,10 +130,16 @@ namespace LibraryService.Tests.Api.Authors
             Assert.False(exists);
         }
 
-        private int CreateAuthor(string name)
+        private int CreateAuthor(string name, string bio, DateTimeOffset? birthDate, DateTimeOffset? deathDate)
         {
             using var dbContext = CreateDbContext();
-            var author = new Author() { Name = name };
+            var author = new Author()
+            {
+                Name = name,
+                Biography = bio,
+                BirthDate = birthDate,
+                DeathDate = deathDate
+            };
             dbContext.Authors.Add(author);
             dbContext.SaveChanges();
 

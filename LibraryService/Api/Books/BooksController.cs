@@ -118,6 +118,11 @@ namespace LibraryService.Api.Books
                 Title = book.Title,
                 Format = book.Format,
                 Language = book.Language,
+                Isbn = book.Isbn,
+                Isbn13 = book.Isbn13,
+                Description = book.Description,
+                PubDate = book.PubDate,
+                CoverUrl = book.CoverUrl,
                 WorkId = book.WorkId,
                 BookAuthors = book
                     .BookAuthors
@@ -136,6 +141,11 @@ namespace LibraryService.Api.Books
                 Title = viewModel.Title,
                 Format = viewModel.Format,
                 Language = viewModel.Language,
+                Isbn = viewModel.Isbn,
+                Isbn13 = viewModel.Isbn13,
+                Description = viewModel.Description,
+                PubDate = viewModel.PubDate,
+                CoverUrl = viewModel.CoverUrl,
                 WorkId = viewModel.WorkId,
                 BookAuthors = viewModel
                     .BookAuthors

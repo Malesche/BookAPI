@@ -1,4 +1,5 @@
-﻿using LibraryService.Api.Authors.ViewModels;
+﻿using LibraryService.Api.Authors.Models;
+using LibraryService.Api.Authors.ViewModels;
 using LibraryService.Persistence;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +19,7 @@ namespace LibraryService.Api.Authors
         [HttpPost]
         public IActionResult CreateAuthor([FromBody]AuthorWriteViewModel viewModel)
         {
-            _authorService.Create(viewModel.Name);
+            _authorService.Create(WriteModelFromWriteViewModel(viewModel));
             return NoContent();
         }
 
@@ -65,7 +66,7 @@ namespace LibraryService.Api.Authors
             if (!_authorService.Exists(id))
                 return NotFound($"The Author Id {id} does not exist!");
 
-            _authorService.Update(id, viewModel.Name);
+            _authorService.Update(id, WriteModelFromWriteViewModel(viewModel));
 
             return NoContent();
         }
@@ -75,7 +76,21 @@ namespace LibraryService.Api.Authors
             return new AuthorReadViewModel
             {
                 Id = author.Id,
-                Name = author.Name
+                Name = author.Name,
+                Biography = author.Biography,
+                BirthDate = author.BirthDate,
+                DeathDate = author.DeathDate
+            };
+        }
+
+        private static AuthorWriteModel WriteModelFromWriteViewModel(AuthorWriteViewModel viewModel)
+        {
+            return new AuthorWriteModel
+            {
+                Name = viewModel.Name,
+                Biography = viewModel.Biography,
+                BirthDate = viewModel.BirthDate,
+                DeathDate = viewModel.DeathDate
             };
         }
     }
