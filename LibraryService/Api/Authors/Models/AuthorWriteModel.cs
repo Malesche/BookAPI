@@ -1,10 +1,7 @@
-﻿
-namespace LibraryService.Api.Authors.ViewModels
+﻿namespace LibraryService.Api.Authors.Models
 {
-    public class AuthorReadViewModel
+    public class AuthorWriteModel
     {
-        public int Id { get; set; }
-
         public string Name { get; set; }
 
         public string Biography { get; set; }

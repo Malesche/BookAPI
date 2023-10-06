@@ -16,7 +16,7 @@
         
         public string Description { get; set; }
         
-        public DateTimeOffset PubDate { get; set; }
+        public DateTimeOffset? PubDate { get; set; }
         
         public string CoverUrl { get; set; }
 

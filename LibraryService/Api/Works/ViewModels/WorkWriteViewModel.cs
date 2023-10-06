@@ -6,5 +6,7 @@ namespace LibraryService.Api.Works.ViewModels
     {
         [Required]
         public string Title { get; set; }
+
+        public DateTimeOffset? EarliestPubDate { get; set; }
     }
 }
