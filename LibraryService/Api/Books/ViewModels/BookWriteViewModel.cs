@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LibraryService.Persistence;
+using System.ComponentModel.DataAnnotations;
 
 namespace LibraryService.Api.Books.ViewModels
 {
@@ -8,7 +9,7 @@ namespace LibraryService.Api.Books.ViewModels
         public string Title { get; set; }
 
         [Required]
-        public string Format { get; set; }
+        public BookFormat? Format { get; set; }
         
         public string Language { get; set; }
 

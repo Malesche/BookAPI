@@ -1,10 +1,12 @@
-﻿namespace LibraryService.Api.Books.Models
+﻿using LibraryService.Persistence;
+
+namespace LibraryService.Api.Books.Models
 {
     public record BookWriteModel
     {
         public string Title { get; set; }
 
-        public string Format { get; set; }
+        public BookFormat? Format { get; set; }
 
         public string Language { get; set; }
 

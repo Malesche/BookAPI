@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using LibraryService.Api.Authors;
 using LibraryService.Api.Books;
 using LibraryService.Api.Works;
@@ -8,13 +9,18 @@ namespace LibraryService
 {
     public class Program
     {
+        private const string CorsPolicyName = "_CorsPolicy";
+
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddJsonOptions(x =>
+            {
+                x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<LibraryDbContext>(
@@ -25,6 +31,16 @@ namespace LibraryService
             builder.Services.AddScoped<IBookService, BookService>();
             builder.Services.AddScoped<IAuthorService, AuthorService>();
 
+            builder.Services.AddCors(options => options
+                .AddPolicy(CorsPolicyName, policy =>
+                    policy
+                        .WithOrigins(new[] { builder.Configuration.GetValue<string>("Cors") })
+                        .AllowCredentials()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        ));
+
+
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
@@ -34,6 +50,7 @@ namespace LibraryService
             }
 
             app.UseHttpsRedirection();
+            app.UseCors(CorsPolicyName);
             app.UseAuthorization();
             app.MapControllers();
 
