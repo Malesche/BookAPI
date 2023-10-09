@@ -20,7 +20,7 @@ namespace LibraryService.Tests.Api.Books
             var writeViewModel = new BookWriteViewModel
             {
                 Title = "BookTitle",
-                Format = "format",
+                Format = BookFormat.Paperback,
                 Language = "language",
                 Isbn = "3902866063",
                 Isbn13 = "9783902866066",
@@ -51,7 +51,7 @@ namespace LibraryService.Tests.Api.Books
             var writeViewModel = new BookWriteViewModel
             {
                 Title = "BookTitle",
-                Format = "format",
+                Format = BookFormat.Paperback,
                 Language = "language",
                 Isbn = "3902866063",
                 Isbn13 = "9783902866066",
@@ -82,7 +82,7 @@ namespace LibraryService.Tests.Api.Books
             var writeViewModel = new BookWriteViewModel
             {
                 Title = "BookTitle",
-                Format = "format",
+                Format = BookFormat.Paperback,
                 Language = "language",
                 Isbn = "3902866063",
                 Isbn13 = "9783902866066",
@@ -113,7 +113,7 @@ namespace LibraryService.Tests.Api.Books
             var writeViewModel = new BookWriteViewModel
             {
                 Title = "BookTitle",
-                Format = "format",
+                Format = BookFormat.Paperback,
                 Language = "language",
                 Isbn = "3902866063",
                 Isbn13 = "9783902866066",
@@ -135,7 +135,7 @@ namespace LibraryService.Tests.Api.Books
                 .Create(
                     Arg.Is<BookWriteModel>(model => 
                         model.Title == "BookTitle" 
-                        && model.Format == "format"
+                        && model.Format == BookFormat.Paperback
                         && model.Language == "language"
                         && model.Isbn == "3902866063"
                         && model.Isbn13 == "9783902866066"
@@ -160,7 +160,7 @@ namespace LibraryService.Tests.Api.Books
             var writeViewModel = new BookWriteViewModel
             {
                 Title = "BookTitle",
-                Format = "format",
+                Format = BookFormat.Paperback,
                 Language = "language",
                 Isbn = "3902866063",
                 Isbn13 = "9783902866066",
@@ -191,7 +191,7 @@ namespace LibraryService.Tests.Api.Books
             var writeViewModel = new BookWriteViewModel
             {
                 Title = "BookTitle",
-                Format = "format",
+                Format = BookFormat.Paperback,
                 Language = "language",
                 Isbn = "3902866063",
                 Isbn13 = "9783902866066",
@@ -431,7 +431,7 @@ namespace LibraryService.Tests.Api.Books
                     {
                         Id = 1,
                         Title = "Title1",
-                        Format = "format1",
+                        Format = BookFormat.Paperback,
                         Language = "language1",
                         WorkId = 1,
                         Isbn = "1",
@@ -449,7 +449,7 @@ namespace LibraryService.Tests.Api.Books
                     {
                         Id = 2,
                         Title = "Title2",
-                        Format = "format2",
+                        Format = BookFormat.Hardcover,
                         Language = "language2",
                         Isbn = "2",
                         Isbn13 = "222",
@@ -467,7 +467,7 @@ namespace LibraryService.Tests.Api.Books
                     {
                         Id = 3,
                         Title = "Title3",
-                        Format = "format3",
+                        Format = BookFormat.Audiobook,
                         Language = "language3",
                         Isbn = "3",
                         Isbn13 = "333",
@@ -493,7 +493,7 @@ namespace LibraryService.Tests.Api.Books
 
             Assert.Contains(bookList, model =>
                 model.Title == "Title1"
-                && model.Format == "format1"
+                && model.Format == BookFormat.Paperback
                 && model.Language == "language1"
                 && model.Isbn == "1"
                 && model.Isbn13 == "111"
@@ -503,7 +503,7 @@ namespace LibraryService.Tests.Api.Books
                 && model.WorkId == 1);
             Assert.Contains(bookList, model =>
                 model.Title == "Title2"
-                && model.Format == "format2"
+                && model.Format == BookFormat.Hardcover
                 && model.Language == "language2"
                 && model.Isbn == "2"
                 && model.Isbn13 == "222"
@@ -513,7 +513,7 @@ namespace LibraryService.Tests.Api.Books
                 && model.WorkId == 2);
             Assert.Contains(bookList, model =>
                 model.Title == "Title3"
-                && model.Format == "format3"
+                && model.Format == BookFormat.Audiobook
                 && model.Language == "language3"
                 && model.Isbn == "3"
                 && model.Isbn13 == "333"
@@ -561,7 +561,7 @@ namespace LibraryService.Tests.Api.Books
             {
                 Id = 5,
                 Title = "BookTitle",
-                Format = "format",
+                Format = BookFormat.Paperback,
                 Language = "language",
                 Isbn = "3902866063",
                 Isbn13 = "9783902866066",
@@ -585,7 +585,7 @@ namespace LibraryService.Tests.Api.Books
             Assert.IsAssignableFrom<BookReadViewModel>(model);
             Assert.Equal(5, model.Id);
             Assert.Equal("BookTitle", model.Title);
-            Assert.Equal("format", model.Format);
+            Assert.Equal(BookFormat.Paperback, model.Format);
             Assert.Equal("language", model.Language);
             Assert.Equal("3902866063", model.Isbn);
             Assert.Equal("9783902866066", model.Isbn13);
@@ -606,7 +606,7 @@ namespace LibraryService.Tests.Api.Books
             {
                 Id = 5,
                 Title = "BookTitle",
-                Format = "format",
+                Format = BookFormat.Paperback,
                 Language = "language",
                 Isbn = "3902866063",
                 Isbn13 = "9783902866066",
@@ -664,7 +664,7 @@ namespace LibraryService.Tests.Api.Books
             var writeViewModel = new BookWriteViewModel
             {
                 Title = "BookTitle",
-                Format = "format",
+                Format = BookFormat.Paperback,
                 Language = "language",
                 Isbn = "3902866063",
                 Isbn13 = "9783902866066",
@@ -696,7 +696,7 @@ namespace LibraryService.Tests.Api.Books
             var writeViewModel = new BookWriteViewModel
             {
                 Title = "BookTitle",
-                Format = "format",
+                Format = BookFormat.Paperback,
                 Language = "language",
                 Isbn = "3902866063",
                 Isbn13 = "9783902866066",
@@ -728,7 +728,7 @@ namespace LibraryService.Tests.Api.Books
             var writeViewModel = new BookWriteViewModel
             {
                 Title = "BookTitle",
-                Format = "format",
+                Format = BookFormat.Paperback,
                 Language = "language",
                 Isbn = "3902866063",
                 Isbn13 = "9783902866066",
@@ -760,7 +760,7 @@ namespace LibraryService.Tests.Api.Books
             var writeViewModel = new BookWriteViewModel
             {
                 Title = "BookTitle",
-                Format = "format",
+                Format = BookFormat.Paperback,
                 Language = "language",
                 Isbn = "3902866063",
                 Isbn13 = "9783902866066",
@@ -792,7 +792,7 @@ namespace LibraryService.Tests.Api.Books
             var writeViewModel = new BookWriteViewModel
             {
                 Title = "BookTitle",
-                Format = "format",
+                Format = BookFormat.Paperback,
                 Language = "language",
                 Isbn = "3902866063",
                 Isbn13 = "9783902866066",
@@ -811,7 +811,7 @@ namespace LibraryService.Tests.Api.Books
 
             bookService.Received(1).Update(5, Arg.Is<BookWriteModel>(model =>
                 model.Title == "BookTitle"
-                && model.Format == "format"
+                && model.Format == BookFormat.Paperback
                 && model.Language == "language"
                 && model.Isbn == "3902866063"
                 && model.Isbn13 == "9783902866066"
@@ -837,7 +837,7 @@ namespace LibraryService.Tests.Api.Books
             var writeViewModel = new BookWriteViewModel
             {
                 Title = "BookTitle",
-                Format = "format",
+                Format = BookFormat.Paperback,
                 Language = "language",
                 Isbn = "3902866063",
                 Isbn13 = "9783902866066",
@@ -869,7 +869,7 @@ namespace LibraryService.Tests.Api.Books
             var writeViewModel = new BookWriteViewModel
             {
                 Title = "BookTitle",
-                Format = "format",
+                Format = BookFormat.Paperback,
                 Language = "language",
                 Isbn = "3902866063",
                 Isbn13 = "9783902866066",
@@ -901,7 +901,7 @@ namespace LibraryService.Tests.Api.Books
             var writeViewModel = new BookWriteViewModel
             {
                 Title = "BookTitle",
-                Format = "format",
+                Format = BookFormat.Paperback,
                 Language = "language",
                 Isbn = "3902866063",
                 Isbn13 = "9783902866066",

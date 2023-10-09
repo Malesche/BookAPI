@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using LibraryService.Api.Authors;
 using LibraryService.Api.Books;
 using LibraryService.Api.Works;
@@ -16,7 +17,10 @@ namespace LibraryService
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddJsonOptions(x =>
+            {
+                x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<LibraryDbContext>(

@@ -22,7 +22,7 @@ namespace LibraryService.Tests.Api.Books
             var bookWriteModel = new BookWriteModel
             {
                 Title = "BookTitle",
-                Format = "paperback",
+                Format = BookFormat.Paperback,
                 Language = "english",
                 Isbn = "3902866063",
                 Isbn13 = "9783902866066",
@@ -39,7 +39,7 @@ namespace LibraryService.Tests.Api.Books
                 .Include(b => b.BookAuthors)
                 .Single();
             Assert.Equal("BookTitle", book.Title);
-            Assert.Equal("paperback", book.Format);
+            Assert.Equal(BookFormat.Paperback, book.Format);
             Assert.Equal("english", book.Language);
             Assert.Equal("3902866063", book.Isbn);
             Assert.Equal("9783902866066", book.Isbn13);
@@ -57,7 +57,7 @@ namespace LibraryService.Tests.Api.Books
         public void Update_SavesToDb()
         {
             var service = new BookService(DbContext);
-            var bookId = CreateBook("TitleBeforeUpdate", "hardcover", "german", null, null, null, null, null);
+            var bookId = CreateBook("TitleBeforeUpdate", BookFormat.Paperback, "german", null, null, null, null, null);
             var workId = CreateWork("WorkTitle", null);
             var author1Id = CreateAuthor("Author1", null, null, null);
             var author2Id = CreateAuthor("Author2", null, null, null);
@@ -69,7 +69,7 @@ namespace LibraryService.Tests.Api.Books
             var bookWriteModel = new BookWriteModel
             {
                 Title = "BookTitle",
-                Format = "paperback",
+                Format = BookFormat.Paperback,
                 Language = "english",
                 Isbn = "3902866063",
                 Isbn13 = "9783902866066",
@@ -86,7 +86,7 @@ namespace LibraryService.Tests.Api.Books
                 .Include(b => b.BookAuthors)
                 .Single();
             Assert.Equal("BookTitle", book.Title);
-            Assert.Equal("paperback", book.Format);
+            Assert.Equal(BookFormat.Paperback, book.Format);
             Assert.Equal("english", book.Language);
             Assert.Equal("3902866063", book.Isbn);
             Assert.Equal("9783902866066", book.Isbn13);
@@ -104,7 +104,7 @@ namespace LibraryService.Tests.Api.Books
         public void AddBookAuthor_SavesToDb()
         {
             var service = new BookService(DbContext);
-            var bookId = CreateBook("BookTitle", "paperback", "english", null, null, null, null, null);
+            var bookId = CreateBook("BookTitle", BookFormat.Paperback, "english", null, null, null, null, null);
             var authorId = CreateAuthor("AuthorName", null, null, null);
 
             service.AddBookAuthor(bookId, authorId, AuthorRole.Author);
@@ -122,7 +122,7 @@ namespace LibraryService.Tests.Api.Books
         [Fact]
         public void RemoveBookAuthorInRole_SavesToDb()
         {
-            var bookId = CreateBook("BookTitle", "paperback", "english", null, null, null, null, null);
+            var bookId = CreateBook("BookTitle", BookFormat.Paperback, "english", null, null, null, null, null);
             var authorId = CreateAuthor("AuthorName", null, null, null);
             AddBookAuthorInRole(bookId, authorId, AuthorRole.Author);
             AddBookAuthorInRole(bookId, authorId, AuthorRole.Translator);
@@ -143,7 +143,7 @@ namespace LibraryService.Tests.Api.Books
         [Fact]
         public void RemoveBookAuthor_SavesToDb()
         {
-            var bookId = CreateBook("BookTitle", "paperback", "english", null, null, null, null, null);
+            var bookId = CreateBook("BookTitle", BookFormat.Paperback, "english", null, null, null, null, null);
             var authorId = CreateAuthor("AuthorName", null, null, null);
             AddBookAuthorInRole(bookId, authorId, AuthorRole.Author);
             AddBookAuthorInRole(bookId, authorId, AuthorRole.Translator);
@@ -167,9 +167,9 @@ namespace LibraryService.Tests.Api.Books
             var pubDate1 = new DateTimeOffset(2001, 1, 1, 7, 0, 0, TimeSpan.FromHours(-7));
             var pubDate2 = new DateTimeOffset(2002, 2, 2, 7, 0, 0, TimeSpan.FromHours(-7));
             var pubDate3 = new DateTimeOffset(2003, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7));
-            var bookId1 = CreateBook("Book1", "paperback", "english", "11", "111", "description1", pubDate1, "coverURL1", workId);
-            var bookId2 = CreateBook("Book2", "hardback", "english", "22", "222", "description2", pubDate2, "coverURL2", workId);
-            var bookId3 = CreateBook("Book3", "audiobook", "english", "33", "333", "description3", pubDate3, "coverURL3");
+            var bookId1 = CreateBook("Book1", BookFormat.Paperback, "english", "11", "111", "description1", pubDate1, "coverURL1", workId);
+            var bookId2 = CreateBook("Book2", BookFormat.Hardcover, "english", "22", "222", "description2", pubDate2, "coverURL2", workId);
+            var bookId3 = CreateBook("Book3", BookFormat.Audiobook, "english", "33", "333", "description3", pubDate3, "coverURL3");
             AddBookAuthorInRole(bookId1, authorId, AuthorRole.Author);
             AddBookAuthorInRole(bookId2, authorId, AuthorRole.Translator);
             AddBookAuthorInRole(bookId2, authorId, AuthorRole.Narrator);
@@ -187,7 +187,7 @@ namespace LibraryService.Tests.Api.Books
             Assert.IsAssignableFrom<IEnumerable<BookAuthor>>(book1Authors);
             Assert.IsAssignableFrom<IEnumerable<BookAuthor>>(book2Authors);
             Assert.Equal("Book1", book1.Title);
-            Assert.Equal("paperback", book1.Format);
+            Assert.Equal(BookFormat.Paperback, book1.Format);
             Assert.Equal("english", book1.Language);
             Assert.Equal("11", book1.Isbn);
             Assert.Equal("111", book1.Isbn13);
@@ -196,7 +196,7 @@ namespace LibraryService.Tests.Api.Books
             Assert.Equal("coverURL1", book1.CoverUrl);
             Assert.Equal(workId, book1.WorkId);
             Assert.Equal("Book2", book2.Title);
-            Assert.Equal("hardback", book2.Format);
+            Assert.Equal(BookFormat.Hardcover, book2.Format);
             Assert.Equal("english", book2.Language);
             Assert.Equal("22", book2.Isbn);
             Assert.Equal("222", book2.Isbn13);
@@ -205,7 +205,7 @@ namespace LibraryService.Tests.Api.Books
             Assert.Equal("coverURL2", book2.CoverUrl);
             Assert.Equal(workId, book2.WorkId);
             Assert.Equal("Book3", book3.Title);
-            Assert.Equal("audiobook", book3.Format);
+            Assert.Equal(BookFormat.Audiobook, book3.Format);
             Assert.Equal("english", book3.Language);
             Assert.Equal("33", book3.Isbn);
             Assert.Equal("333", book3.Isbn13);
@@ -222,13 +222,13 @@ namespace LibraryService.Tests.Api.Books
         public void Get_validId_ReturnsBook()
         {
             var pubDate = new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7));
-            var bookId = CreateBook("BookTitle", "paperback", "english", "11", "111", "description", pubDate, "coverURL");
+            var bookId = CreateBook("BookTitle", BookFormat.Paperback, "english", "11", "111", "description", pubDate, "coverURL");
             var service = new BookService(DbContext);
 
             var book = service.Get(bookId);
 
             Assert.Equal("BookTitle", book.Title);
-            Assert.Equal("paperback", book.Format);
+            Assert.Equal(BookFormat.Paperback, book.Format);
             Assert.Equal("english", book.Language);
             Assert.Equal("11", book.Isbn);
             Assert.Equal("111", book.Isbn13);
@@ -250,7 +250,7 @@ namespace LibraryService.Tests.Api.Books
         [Fact]
         public void Exists_validId_ReturnsTrue()
         {
-            var bookId = CreateBook("BookTitle", "paperback", "english", null, null, null, null, null);
+            var bookId = CreateBook("BookTitle", BookFormat.Paperback, "english", null, null, null, null, null);
             var service = new BookService(DbContext);
 
             var exists = service.Exists(bookId);
@@ -313,7 +313,7 @@ namespace LibraryService.Tests.Api.Books
         [Fact]
         public void BookAuthorRoleExists_validId_ReturnsTrue()
         {
-            var bookId = CreateBook("BookTitle", "paperback", "english", null, null, null, null, null);
+            var bookId = CreateBook("BookTitle", BookFormat.Paperback, "english", null, null, null, null, null);
             var authorId = CreateAuthor("AuthorName", null, null, null);
             AddBookAuthorInRole(bookId, authorId, AuthorRole.Author);
             var service = new BookService(DbContext);
@@ -326,7 +326,7 @@ namespace LibraryService.Tests.Api.Books
         [Fact]
         public void BookAuthorRoleExists_AuthorIsNotSavedInThisRole_ReturnsFalse()
         {
-            var bookId = CreateBook("BookTitle", "paperback", "english", null, null, null, null, null);
+            var bookId = CreateBook("BookTitle", BookFormat.Paperback, "english", null, null, null, null, null);
             var authorId = CreateAuthor("AuthorName", null, null, null);
             AddBookAuthorInRole(bookId, authorId, AuthorRole.Author);
             var service = new BookService(DbContext);
@@ -337,7 +337,7 @@ namespace LibraryService.Tests.Api.Books
         }
 
 
-        private int CreateBook(string title, string format, string language, string isbn, string isbn13, string description, DateTimeOffset? pubDate, string coverUrl, int? workId = null)
+        private int CreateBook(string title, BookFormat? format, string language, string isbn, string isbn13, string description, DateTimeOffset? pubDate, string coverUrl, int? workId = null)
         {
             using var dbContext = CreateDbContext();
             var book = new Book()

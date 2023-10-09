@@ -1,4 +1,6 @@
-﻿namespace LibraryService.Api.Books.ViewModels
+﻿using LibraryService.Persistence;
+
+namespace LibraryService.Api.Books.ViewModels
 {
     public class BookReadViewModel
     {
@@ -6,7 +8,7 @@
 
         public string Title { get; set; }
 
-        public string Format { get; set; }
+        public BookFormat? Format { get; set; }
 
         public string Language { get; set; }
 
