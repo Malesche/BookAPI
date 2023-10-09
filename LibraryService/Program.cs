@@ -8,6 +8,8 @@ namespace LibraryService
 {
     public class Program
     {
+        private const string CorsPolicyName = "_CorsPolicy";
+
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +27,16 @@ namespace LibraryService
             builder.Services.AddScoped<IBookService, BookService>();
             builder.Services.AddScoped<IAuthorService, AuthorService>();
 
+            builder.Services.AddCors(options => options
+                .AddPolicy(CorsPolicyName, policy =>
+                    policy
+                        .WithOrigins(new[] { builder.Configuration.GetValue<string>("Cors") })
+                        .AllowCredentials()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        ));
+
+
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
@@ -34,6 +46,7 @@ namespace LibraryService
             }
 
             app.UseHttpsRedirection();
+            app.UseCors(CorsPolicyName);
             app.UseAuthorization();
             app.MapControllers();
 
