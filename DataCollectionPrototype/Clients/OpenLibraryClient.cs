@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataCollectionPrototype.Models;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-
+using DataCollectionPrototype.SourceGathering.OpenLibrary.Model;
 
 namespace DataCollectionPrototype.Clients
 {
@@ -30,22 +29,5 @@ namespace DataCollectionPrototype.Clients
 
             return book;
         }
-
-        protected void PrintBook(OpenLibraryBook book)
-        {
-            Console.WriteLine(book.title);
-            Console.WriteLine(book.key);
-            foreach (var author in book.authors)
-            {
-                Console.WriteLine(author.key);
-            }
-
-            foreach (var contribution in book.contributions)
-            {
-                Console.WriteLine(contribution);
-            }
-        }
-
-
     }
 }

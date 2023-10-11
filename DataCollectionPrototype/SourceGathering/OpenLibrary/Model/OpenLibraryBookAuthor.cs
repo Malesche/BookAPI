@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace DataCollectionPrototype.Models
+namespace DataCollectionPrototype.SourceGathering.OpenLibrary.Model
 {
     internal class OpenLibraryBookAuthor
     {

@@ -1,25 +1,25 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace DataCollectionPrototype.Models
+namespace DataCollectionPrototype.SourceGathering.OpenLibrary.Model
 {
     internal class OpenLibraryWork
     {
-            public string title { get; set; }
-            public int[] covers { get; set; }
-            public string[] subject_places { get; set; }
-            public string first_publish_date { get; set; }
-            public string[] subject_people { get; set; }
-            public string key { get; set; }
-            public Author[] authors { get; set; }
-            public Excerpt[] excerpts { get; set; }
-            public Type type { get; set; }
-            public string[] subjects { get; set; }
-            public string[] subject_times { get; set; }
-            public int latest_revision { get; set; }
-            public int revision { get; set; }
-            public Created created { get; set; }
-            public Last_Modified last_modified { get; set; }
-        
+        public string title { get; set; }
+        public int[] covers { get; set; }
+        public string[] subject_places { get; set; }
+        public string first_publish_date { get; set; }
+        public string[] subject_people { get; set; }
+        public string key { get; set; }
+        public Author[] authors { get; set; }
+        public Excerpt[] excerpts { get; set; }
+        public Type type { get; set; }
+        public string[] subjects { get; set; }
+        public string[] subject_times { get; set; }
+        public int latest_revision { get; set; }
+        public int revision { get; set; }
+        public Created created { get; set; }
+        public Last_Modified last_modified { get; set; }
+
 
 
         public class Type
