@@ -1,24 +1,96 @@
 ﻿using System.Net.Http.Headers;
+using System.Text.Json;
+using DataCollectionPrototype.Models;
+using DataCollectionPrototype.Clients;
 
 namespace DataCollectionPrototype
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            using var client = new HttpClient();
-            client.BaseAddress = new Uri("https://openlibrary.org/");
+            using HttpClient client = new();
+            client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage response = client.GetAsync("works/OL45804W.json").Result;
-            if (response.IsSuccessStatusCode)
-            {
-                var responseContent = response.Content.ReadAsStringAsync().Result;
-                Console.WriteLine(responseContent);
+            //client.DefaultRequestHeaders.Add("User-Agent", ".NET Foundation Repository Reporter");
+
+            await ProcessWorkAsync(client);
+            await ProcessBookAsync(client);
+
+            var openLibClient = new OpenLibraryClient();
+            OpenLibraryBook book = await openLibClient.GetOpenLibraryBookAsync("books/OL8364844M");
+
+            Console.ReadKey();
+        }
+
+        static async Task ProcessWorkAsync(HttpClient client)
+        {
+            await using Stream stream = await client.GetStreamAsync("https://openlibrary.org/works/OL262758W");
+            var work = await JsonSerializer.DeserializeAsync<OpenLibraryWork>(stream);
+
+            Console.WriteLine(work.title);
+            Console.WriteLine(work.key);
+            foreach (var author in work.authors)
+            { 
+                Console.WriteLine(author.author.key);
             }
-            else
+            //Console.WriteLine(work.Title);
+            //Console.WriteLine(work.PubDate);
+            //Console.WriteLine(work.OpenLibraryWorkPath);
+        }
+
+        static async Task ProcessBookAsync(HttpClient client)
+        {
+            await using Stream stream = await client.GetStreamAsync("https://openlibrary.org/books/OL8364844M");
+            var book = await JsonSerializer.DeserializeAsync<OpenLibraryBook>(stream);
+
+            Console.WriteLine(book.title);
+            Console.WriteLine(book.key);
+            foreach (var author in book.authors)
             {
-                Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+                Console.WriteLine(author.key);
             }
+
+            foreach (var contribution in book.contributions)
+            {
+                Console.WriteLine(contribution);
+            }
+            //Console.WriteLine(work.Title);
+            //Console.WriteLine(work.PubDate);
+            //Console.WriteLine(work.OpenLibraryWorkPath);
         }
     }
 }
+
+
+
+
+
+
+
+
+
+//using System.Net.Http.Headers;
+
+//namespace DataCollectionPrototype
+//{
+//    public class Program
+//    {
+//        public static void Main(string[] args)
+//        {
+//            using var client = new HttpClient();
+//            client.BaseAddress = new Uri("https://openlibrary.org/");
+//            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+//            HttpResponseMessage response = client.GetAsync("works/OL45804W.json").Result;
+//            if (response.IsSuccessStatusCode)
+//            {
+//                var responseContent = response.Content.ReadAsStringAsync().Result;
+//                Console.WriteLine(responseContent);
+//            }
+//            else
+//            {
+//                Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+//            }
+//        }
+//    }
+//}
