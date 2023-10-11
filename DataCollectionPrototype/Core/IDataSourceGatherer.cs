@@ -1,4 +1,6 @@
-﻿namespace DataCollectionPrototype.Core;
+﻿using DataCollectionPrototype.Core.Model;
+
+namespace DataCollectionPrototype.Core;
 
 public interface IDataSourceGatherer
 {
@@ -8,5 +10,5 @@ public interface IDataSourceGatherer
     /// of this interface and can be of course a subset.
     /// </summary>
     /// <returns></returns>
-    Task<object[]> CollectAsync();
+    Task<BookModel[]> CollectAsync();
 }

@@ -1,4 +1,6 @@
-﻿namespace DataCollectionPrototype.Core;
+﻿using DataCollectionPrototype.Core.Model;
+
+namespace DataCollectionPrototype.Core;
 
 public interface ITargetWriter
 {
@@ -7,5 +9,5 @@ public interface ITargetWriter
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    Task WriteAsync(object[] data);
+    Task WriteAsync(BookModel[] data);
 }

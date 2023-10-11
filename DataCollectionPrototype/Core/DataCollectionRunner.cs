@@ -1,6 +1,4 @@
-﻿using DataCollectionPrototype.Consolidation;
-using DataCollectionPrototype.SourceGathering.OpenLibrary;
-using DataCollectionPrototype.TargetWriting;
+﻿using DataCollectionPrototype.Core.Model;
 
 namespace DataCollectionPrototype.Core
 {
@@ -26,7 +24,7 @@ namespace DataCollectionPrototype.Core
 
         public async Task RunAsync()
         {
-            var booksFromAllSources = new List<object>();
+            var booksFromAllSources = new List<BookModel>();
 
             foreach (var gatherer in _gatherers)
             {

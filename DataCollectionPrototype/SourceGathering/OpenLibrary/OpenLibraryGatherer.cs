@@ -1,11 +1,12 @@
 ﻿using DataCollectionPrototype.Core;
+using DataCollectionPrototype.Core.Model;
 using DataCollectionPrototype.SourceGathering.OpenLibrary.Model;
 
 namespace DataCollectionPrototype.SourceGathering.OpenLibrary
 {
     internal class OpenLibraryGatherer : IDataSourceGatherer
     {
-        public async Task<object[]> CollectAsync()
+        public async Task<BookModel[]> CollectAsync()
         {
             using var client = new HttpClient();
             client.BaseAddress = new Uri("https://openlibrary.org/");
@@ -17,9 +18,9 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
                 book = await response.Content.ReadAsAsync<OpenLibraryBook>();
             }
 
-            return new object[]
+            return new BookModel[]
             {
-                book
+                new BookModel()
             };
         }
     }

@@ -1,4 +1,6 @@
-﻿namespace DataCollectionPrototype.Core;
+﻿using DataCollectionPrototype.Core.Model;
+
+namespace DataCollectionPrototype.Core;
 
 public interface IDataConsolidator
 {
@@ -7,5 +9,5 @@ public interface IDataConsolidator
     /// </summary>
     /// <param name="sourceData"></param>
     /// <returns></returns>
-    Task<object[]> ConsolidateAsync(IEnumerable<object> sourceData);
+    Task<BookModel[]> ConsolidateAsync(IEnumerable<BookModel> sourceData);
 }
