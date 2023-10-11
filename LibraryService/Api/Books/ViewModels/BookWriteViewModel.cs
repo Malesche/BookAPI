@@ -8,7 +8,6 @@ namespace LibraryService.Api.Books.ViewModels
         [Required]
         public string Title { get; set; }
 
-        [Required]
         public BookFormat? Format { get; set; }
         
         public string Language { get; set; }

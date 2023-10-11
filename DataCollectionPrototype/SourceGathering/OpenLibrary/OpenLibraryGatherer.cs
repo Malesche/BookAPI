@@ -13,10 +13,10 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
             OpenLibraryBook book = null;
 
             HttpResponseMessage response = await client.GetAsync("books/OL8364844M");
-            if (response.IsSuccessStatusCode)
-            {
-                book = await response.Content.ReadAsAsync<OpenLibraryBook>();
-            }
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    book = await response.Content.ReadAsAsync<OpenLibraryBook>();
+            //}
 
             return new BookModel[]
             {
