@@ -110,6 +110,18 @@ namespace LibraryService.Api.Books
             return NoContent();
         }
 
+
+        [HttpDelete("{id:int}")]
+        public IActionResult DeleteBook(int id)
+        {
+            if (!_bookService.Exists(id))
+                return NotFound($"The Book Id {id} does not exist!");
+
+            _bookService.Delete(id);
+
+            return NoContent();
+        }
+
         private static BookReadViewModel ToViewModel(Book book)
         {
             return new BookReadViewModel

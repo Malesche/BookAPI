@@ -10,6 +10,8 @@ namespace LibraryService.Api.Books
 
         public void Update(int id, BookWriteModel model);
 
+        public void Delete(int id);
+
         public void AddBookAuthor(int bookId, int authorId, AuthorRole? authorRole);
 
         public void RemoveBookAuthorInRole(int bookId, int authorId, AuthorRole? authorRole);
@@ -59,6 +61,14 @@ namespace LibraryService.Api.Books
             book.BookAuthors.Clear();
             FillBook(book, model);
 
+            _dbContext.SaveChanges();
+        }
+
+        public void Delete(int id)
+        {
+            _dbContext.Books
+                .Remove(_dbContext.Books
+                    .First(b => b.Id == id));
             _dbContext.SaveChanges();
         }
 
