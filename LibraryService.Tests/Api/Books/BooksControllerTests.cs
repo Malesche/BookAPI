@@ -30,8 +30,8 @@ namespace LibraryService.Tests.Api.Books
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
-                    new(){AuthorId = 1, AuthorRole = AuthorRole.Translator},
-                    new(){AuthorId = 2, AuthorRole = AuthorRole.Narrator}
+                    new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
+                    new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
                 }
             };
 
@@ -61,8 +61,8 @@ namespace LibraryService.Tests.Api.Books
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
-                    new(){AuthorId = 1, AuthorRole = AuthorRole.Translator},
-                    new(){AuthorId = 2, AuthorRole = AuthorRole.Narrator}
+                    new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
+                    new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
                 }
             };
 
@@ -92,8 +92,8 @@ namespace LibraryService.Tests.Api.Books
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
-                    new(){AuthorId = 1, AuthorRole = AuthorRole.Translator},
-                    new(){AuthorId = 2, AuthorRole = AuthorRole.Narrator}
+                    new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
+                    new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
                 }
             };
 
@@ -123,8 +123,8 @@ namespace LibraryService.Tests.Api.Books
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
-                    new(){AuthorId = 1, AuthorRole = AuthorRole.Translator},
-                    new(){AuthorId = 2, AuthorRole = AuthorRole.Narrator}
+                    new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
+                    new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
                 }
             };
 
@@ -133,8 +133,8 @@ namespace LibraryService.Tests.Api.Books
             bookService
                 .Received(1)
                 .Create(
-                    Arg.Is<BookWriteModel>(model => 
-                        model.Title == "BookTitle" 
+                    Arg.Is<BookWriteModel>(model =>
+                        model.Title == "BookTitle"
                         && model.Format == BookFormat.Paperback
                         && model.Language == "language"
                         && model.Isbn == "3902866063"
@@ -170,8 +170,8 @@ namespace LibraryService.Tests.Api.Books
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
-                    new(){AuthorId = 1, AuthorRole = AuthorRole.Translator},
-                    new(){AuthorId = 2, AuthorRole = AuthorRole.Narrator}
+                    new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
+                    new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
                 }
             };
 
@@ -201,8 +201,8 @@ namespace LibraryService.Tests.Api.Books
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
-                    new(){AuthorId = 1, AuthorRole = AuthorRole.Translator},
-                    new(){AuthorId = 2, AuthorRole = AuthorRole.Narrator}
+                    new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
+                    new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
                 }
             };
 
@@ -220,7 +220,8 @@ namespace LibraryService.Tests.Api.Books
             bookService.BookAuthorRoleExists(1, 1, AuthorRole.Illustrator).Returns(false);
             var controller = new BooksController(bookService);
 
-            var result = controller.AddAuthor(1, new BookAuthorWriteViewModel { AuthorId = 1, AuthorRole = AuthorRole.Illustrator });
+            var result = controller.AddAuthor(1,
+                new BookAuthorWriteViewModel { AuthorId = 1, AuthorRole = AuthorRole.Illustrator });
 
             Assert.IsType<NoContentResult>(result);
         }
@@ -234,7 +235,8 @@ namespace LibraryService.Tests.Api.Books
             bookService.BookAuthorRoleExists(1, 1, AuthorRole.Illustrator).Returns(false);
             var controller = new BooksController(bookService);
 
-            var result = controller.AddAuthor(1, new BookAuthorWriteViewModel { AuthorId = 1, AuthorRole = AuthorRole.Illustrator });
+            var result = controller.AddAuthor(1,
+                new BookAuthorWriteViewModel { AuthorId = 1, AuthorRole = AuthorRole.Illustrator });
 
             Assert.IsType<NotFoundObjectResult>(result);
         }
@@ -248,7 +250,8 @@ namespace LibraryService.Tests.Api.Books
             bookService.BookAuthorRoleExists(1, 1, AuthorRole.Illustrator).Returns(false);
             var controller = new BooksController(bookService);
 
-            var result = controller.AddAuthor(1, new BookAuthorWriteViewModel { AuthorId = 1, AuthorRole = AuthorRole.Illustrator });
+            var result = controller.AddAuthor(1,
+                new BookAuthorWriteViewModel { AuthorId = 1, AuthorRole = AuthorRole.Illustrator });
 
             Assert.IsType<NotFoundObjectResult>(result);
         }
@@ -262,7 +265,8 @@ namespace LibraryService.Tests.Api.Books
             bookService.BookAuthorRoleExists(1, 1, AuthorRole.Illustrator).Returns(true);
             var controller = new BooksController(bookService);
 
-            var result = controller.AddAuthor(1, new BookAuthorWriteViewModel { AuthorId = 1, AuthorRole = AuthorRole.Illustrator });
+            var result = controller.AddAuthor(1,
+                new BookAuthorWriteViewModel { AuthorId = 1, AuthorRole = AuthorRole.Illustrator });
 
             Assert.IsType<ConflictObjectResult>(result);
         }
@@ -425,62 +429,62 @@ namespace LibraryService.Tests.Api.Books
         public void GetAllBooks_ReturnsValidViewModels()
         {
             var bookService = Substitute.For<IBookService>();
-            bookService.GetAll().Returns( new List<Book> 
+            bookService.GetAll().Returns(new List<Book>
+            {
+                new()
                 {
-                    new()
+                    Id = 1,
+                    Title = "Title1",
+                    Format = BookFormat.Paperback,
+                    Language = "language1",
+                    WorkId = 1,
+                    Isbn = "1",
+                    Isbn13 = "111",
+                    Description = "describing_describing1",
+                    PubDate = new DateTimeOffset(2001, 1, 1, 7, 0, 0, TimeSpan.FromHours(-7)),
+                    CoverUrl = "someUrl1",
+                    BookAuthors = new List<BookAuthor>
                     {
-                        Id = 1,
-                        Title = "Title1",
-                        Format = BookFormat.Paperback,
-                        Language = "language1",
-                        WorkId = 1,
-                        Isbn = "1",
-                        Isbn13 = "111",
-                        Description = "describing_describing1",
-                        PubDate = new DateTimeOffset(2001, 1, 1, 7, 0, 0, TimeSpan.FromHours(-7)),
-                        CoverUrl = "someUrl1",
-                        BookAuthors = new List<BookAuthor>
-                        {
-                            new(){AuthorId = 1, AuthorRole = AuthorRole.Translator},
-                            new(){AuthorId = 2, AuthorRole = AuthorRole.Narrator}
-                        }
-                    },
-                    new()
-                    {
-                        Id = 2,
-                        Title = "Title2",
-                        Format = BookFormat.Hardcover,
-                        Language = "language2",
-                        Isbn = "2",
-                        Isbn13 = "222",
-                        Description = "describing_describing2",
-                        PubDate = new DateTimeOffset(2002, 2, 2, 7, 0, 0, TimeSpan.FromHours(-7)),
-                        CoverUrl = "someUrl2",
-                        WorkId = 2,
-                        BookAuthors = new List<BookAuthor>
-                        {
-                            new(){AuthorId = 3, AuthorRole = AuthorRole.Editor},
-                            new(){AuthorId = 4, AuthorRole = AuthorRole.Contributor}
-                        }
-                    },
-                    new()
-                    {
-                        Id = 3,
-                        Title = "Title3",
-                        Format = BookFormat.Audiobook,
-                        Language = "language3",
-                        Isbn = "3",
-                        Isbn13 = "333",
-                        Description = "describing_describing3",
-                        PubDate = new DateTimeOffset(2003, 3, 3, 7, 0, 0, TimeSpan.FromHours(-7)),
-                        CoverUrl = "someUrl3",
-                        WorkId = 3,
-                        BookAuthors = new List<BookAuthor>
-                        {
-                            new(){AuthorId = 5, AuthorRole = AuthorRole.Illustrator}
-                        }
+                        new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
+                        new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
                     }
-                });
+                },
+                new()
+                {
+                    Id = 2,
+                    Title = "Title2",
+                    Format = BookFormat.Hardcover,
+                    Language = "language2",
+                    Isbn = "2",
+                    Isbn13 = "222",
+                    Description = "describing_describing2",
+                    PubDate = new DateTimeOffset(2002, 2, 2, 7, 0, 0, TimeSpan.FromHours(-7)),
+                    CoverUrl = "someUrl2",
+                    WorkId = 2,
+                    BookAuthors = new List<BookAuthor>
+                    {
+                        new() { AuthorId = 3, AuthorRole = AuthorRole.Editor },
+                        new() { AuthorId = 4, AuthorRole = AuthorRole.Contributor }
+                    }
+                },
+                new()
+                {
+                    Id = 3,
+                    Title = "Title3",
+                    Format = BookFormat.Audiobook,
+                    Language = "language3",
+                    Isbn = "3",
+                    Isbn13 = "333",
+                    Description = "describing_describing3",
+                    PubDate = new DateTimeOffset(2003, 3, 3, 7, 0, 0, TimeSpan.FromHours(-7)),
+                    CoverUrl = "someUrl3",
+                    WorkId = 3,
+                    BookAuthors = new List<BookAuthor>
+                    {
+                        new() { AuthorId = 5, AuthorRole = AuthorRole.Illustrator }
+                    }
+                }
+            });
             var controller = new BooksController(bookService);
 
             var result = controller.GetAllBooks();
@@ -536,7 +540,7 @@ namespace LibraryService.Tests.Api.Books
             Assert.Equal(1, book3.BookAuthors.Count);
             Assert.Contains(book1.BookAuthors, ba => ba.AuthorId == 1 && ba.AuthorRole == AuthorRole.Translator);
             Assert.Contains(book1.BookAuthors, ba => ba.AuthorId == 2 && ba.AuthorRole == AuthorRole.Narrator);
-            Assert.Contains(book2.BookAuthors, ba => ba.AuthorId == 3 && ba.AuthorRole == AuthorRole.Editor); 
+            Assert.Contains(book2.BookAuthors, ba => ba.AuthorId == 3 && ba.AuthorRole == AuthorRole.Editor);
             Assert.Contains(book2.BookAuthors, ba => ba.AuthorId == 4 && ba.AuthorRole == AuthorRole.Contributor);
             Assert.Contains(book3.BookAuthors, ba => ba.AuthorId == 5 && ba.AuthorRole == AuthorRole.Illustrator);
         }
@@ -557,7 +561,7 @@ namespace LibraryService.Tests.Api.Books
         {
             var bookService = Substitute.For<IBookService>();
             bookService.Exists(5).Returns(true);
-            bookService.Get(5).Returns( new Book
+            bookService.Get(5).Returns(new Book
             {
                 Id = 5,
                 Title = "BookTitle",
@@ -571,8 +575,8 @@ namespace LibraryService.Tests.Api.Books
                 WorkId = 3,
                 BookAuthors = new List<BookAuthor>
                 {
-                    new(){AuthorId = 1, AuthorRole = AuthorRole.Translator},
-                    new(){AuthorId = 2, AuthorRole = AuthorRole.Narrator}
+                    new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
+                    new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
                 }
             });
             var controller = new BooksController(bookService);
@@ -616,8 +620,8 @@ namespace LibraryService.Tests.Api.Books
                 WorkId = 3,
                 BookAuthors = new List<BookAuthor>
                 {
-                    new(){AuthorId = 1, AuthorRole = AuthorRole.Translator},
-                    new(){AuthorId = 2, AuthorRole = AuthorRole.Narrator}
+                    new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
+                    new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
                 }
             });
             var controller = new BooksController(bookService);
@@ -674,8 +678,8 @@ namespace LibraryService.Tests.Api.Books
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
-                    new(){AuthorId = 1, AuthorRole = AuthorRole.Translator},
-                    new(){AuthorId = 2, AuthorRole = AuthorRole.Narrator}
+                    new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
+                    new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
                 }
             };
 
@@ -706,8 +710,8 @@ namespace LibraryService.Tests.Api.Books
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
-                    new(){AuthorId = 1, AuthorRole = AuthorRole.Translator},
-                    new(){AuthorId = 2, AuthorRole = AuthorRole.Narrator}
+                    new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
+                    new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
                 }
             };
 
@@ -738,8 +742,8 @@ namespace LibraryService.Tests.Api.Books
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
-                    new(){AuthorId = 1, AuthorRole = AuthorRole.Translator},
-                    new(){AuthorId = 2, AuthorRole = AuthorRole.Narrator}
+                    new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
+                    new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
                 }
             };
 
@@ -770,8 +774,8 @@ namespace LibraryService.Tests.Api.Books
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
-                    new(){AuthorId = 1, AuthorRole = AuthorRole.Translator},
-                    new(){AuthorId = 2, AuthorRole = AuthorRole.Narrator}
+                    new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
+                    new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
                 }
             };
 
@@ -802,8 +806,8 @@ namespace LibraryService.Tests.Api.Books
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
-                    new(){AuthorId = 1, AuthorRole = AuthorRole.Translator},
-                    new(){AuthorId = 2, AuthorRole = AuthorRole.Narrator}
+                    new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
+                    new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
                 }
             };
 
@@ -847,8 +851,8 @@ namespace LibraryService.Tests.Api.Books
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
-                    new(){AuthorId = 1, AuthorRole = AuthorRole.Translator},
-                    new(){AuthorId = 2, AuthorRole = AuthorRole.Narrator}
+                    new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
+                    new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
                 }
             };
 
@@ -879,8 +883,8 @@ namespace LibraryService.Tests.Api.Books
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
-                    new(){AuthorId = 1, AuthorRole = AuthorRole.Translator},
-                    new(){AuthorId = 2, AuthorRole = AuthorRole.Narrator}
+                    new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
+                    new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
                 }
             };
 
@@ -911,14 +915,62 @@ namespace LibraryService.Tests.Api.Books
                 WorkId = 3,
                 BookAuthors = new List<BookAuthorWriteViewModel>
                 {
-                    new(){AuthorId = 1, AuthorRole = AuthorRole.Translator},
-                    new(){AuthorId = 2, AuthorRole = AuthorRole.Narrator}
+                    new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
+                    new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
                 }
             };
 
             controller.UpdateBook(5, writeViewModel);
 
             bookService.DidNotReceive().Update(Arg.Any<int>(), Arg.Any<BookWriteModel>());
+        }
+
+        [Fact]
+        public void DeleteBook_invalidBookId_ReturnsNotFound()
+        {
+            var bookService = Substitute.For<IBookService>();
+            bookService.Exists(5).Returns(false);
+            var controller = new BooksController(bookService);
+
+            var result = controller.DeleteBook(5);
+
+            Assert.IsType<NotFoundObjectResult>(result);
+        }
+
+        [Fact]
+        public void DeleteBook_validBookId_ReturnsNoContent()
+        {
+            var bookService = Substitute.For<IBookService>();
+            bookService.Exists(5).Returns(true);
+            var controller = new BooksController(bookService);
+
+            var result = controller.DeleteBook(5);
+
+            Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public void DeleteBook_validBookId_CallsServiceDelete()
+        {
+            var bookService = Substitute.For<IBookService>();
+            bookService.Exists(5).Returns(true);
+            var controller = new BooksController(bookService);
+
+            controller.DeleteBook(5);
+
+            bookService.Received(1).Delete(5);
+        }
+
+        [Fact]
+        public void DeleteBook_invalidBookId_DoesNotCallServiceDelete()
+        {
+            var bookService = Substitute.For<IBookService>();
+            bookService.Exists(5).Returns(false);
+            var controller = new BooksController(bookService);
+
+            controller.DeleteBook(5);
+
+            bookService.DidNotReceive().Delete(Arg.Any<int>());
         }
     }
 }
