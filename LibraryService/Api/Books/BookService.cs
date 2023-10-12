@@ -106,6 +106,7 @@ namespace LibraryService.Api.Books
             return _dbContext
                 .Books
                 .Include(b => b.BookAuthors)
+                .Include(b => b.Authors)
                 .ToArray();
         }
 
@@ -114,6 +115,7 @@ namespace LibraryService.Api.Books
             var book = _dbContext
                 .Books
                 .Include(b => b.BookAuthors)
+                .Include(b => b.Authors)
                 .FirstOrDefault(a => a.Id == id);
 
             return book;

@@ -429,6 +429,7 @@ namespace LibraryService.Tests.Api.Books
         public void GetAllBooks_ReturnsValidViewModels()
         {
             var bookService = Substitute.For<IBookService>();
+            var someDate = new DateTimeOffset(2002, 2, 2, 7, 0, 0, TimeSpan.FromHours(-7));
             bookService.GetAll().Returns(new List<Book>
             {
                 new()
@@ -447,6 +448,11 @@ namespace LibraryService.Tests.Api.Books
                     {
                         new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
                         new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
+                    },
+                    Authors = new List<Author>()
+                    {
+                        new() { Id = 1, Name = "Name1", Biography = "bio1", BirthDate = someDate, DeathDate = someDate },
+                        new() { Id = 2, Name = "Name2", Biography = "bio2", BirthDate = someDate, DeathDate = someDate }
                     }
                 },
                 new()
@@ -465,6 +471,11 @@ namespace LibraryService.Tests.Api.Books
                     {
                         new() { AuthorId = 3, AuthorRole = AuthorRole.Editor },
                         new() { AuthorId = 4, AuthorRole = AuthorRole.Contributor }
+                    },
+                    Authors = new List<Author>()
+                    {
+                        new() { Id = 3, Name = "Name3", Biography = "bio3", BirthDate = someDate, DeathDate = someDate },
+                        new() { Id = 4, Name = "Name4", Biography = "bio4", BirthDate = someDate, DeathDate = someDate }
                     }
                 },
                 new()
@@ -482,6 +493,10 @@ namespace LibraryService.Tests.Api.Books
                     BookAuthors = new List<BookAuthor>
                     {
                         new() { AuthorId = 5, AuthorRole = AuthorRole.Illustrator }
+                    },
+                    Authors = new List<Author>
+                    {
+                        new() { Id = 5, Name = "Name5", Biography = "bio5", BirthDate = someDate, DeathDate = someDate }
                     }
                 }
             });
@@ -535,14 +550,14 @@ namespace LibraryService.Tests.Api.Books
             Assert.Equal("Title2", book2.Title);
             Assert.Equal(3, book3.Id);
             Assert.Equal("Title3", book3.Title);
-            Assert.Equal(2, book1.BookAuthors.Count);
-            Assert.Equal(2, book2.BookAuthors.Count);
-            Assert.Equal(1, book3.BookAuthors.Count);
-            Assert.Contains(book1.BookAuthors, ba => ba.AuthorId == 1 && ba.AuthorRole == AuthorRole.Translator);
-            Assert.Contains(book1.BookAuthors, ba => ba.AuthorId == 2 && ba.AuthorRole == AuthorRole.Narrator);
-            Assert.Contains(book2.BookAuthors, ba => ba.AuthorId == 3 && ba.AuthorRole == AuthorRole.Editor);
-            Assert.Contains(book2.BookAuthors, ba => ba.AuthorId == 4 && ba.AuthorRole == AuthorRole.Contributor);
-            Assert.Contains(book3.BookAuthors, ba => ba.AuthorId == 5 && ba.AuthorRole == AuthorRole.Illustrator);
+            Assert.Equal(2, book1.BookAuthorInfos.Count);
+            Assert.Equal(2, book2.BookAuthorInfos.Count);
+            Assert.Equal(1, book3.BookAuthorInfos.Count);
+            Assert.Contains(book1.BookAuthorInfos, ba => ba.AuthorId == 1 && ba.AuthorRole == AuthorRole.Translator);
+            Assert.Contains(book1.BookAuthorInfos, ba => ba.AuthorId == 2 && ba.AuthorRole == AuthorRole.Narrator);
+            Assert.Contains(book2.BookAuthorInfos, ba => ba.AuthorId == 3 && ba.AuthorRole == AuthorRole.Editor);
+            Assert.Contains(book2.BookAuthorInfos, ba => ba.AuthorId == 4 && ba.AuthorRole == AuthorRole.Contributor);
+            Assert.Contains(book3.BookAuthorInfos, ba => ba.AuthorId == 5 && ba.AuthorRole == AuthorRole.Illustrator);
         }
 
         [Fact]
@@ -560,6 +575,7 @@ namespace LibraryService.Tests.Api.Books
         public void GetBookById_validId_ReturnsValidViewModel()
         {
             var bookService = Substitute.For<IBookService>();
+            var someDate = new DateTimeOffset(2002, 2, 2, 7, 0, 0, TimeSpan.FromHours(-7));
             bookService.Exists(5).Returns(true);
             bookService.Get(5).Returns(new Book
             {
@@ -577,6 +593,11 @@ namespace LibraryService.Tests.Api.Books
                 {
                     new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
                     new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
+                },
+                Authors = new List<Author>()
+                {
+                    new() { Id = 1, Name = "Name1", Biography = "bio1", BirthDate = someDate, DeathDate = someDate },
+                    new() { Id = 2, Name = "Name2", Biography = "bio2", BirthDate = someDate, DeathDate = someDate }
                 }
             });
             var controller = new BooksController(bookService);
@@ -597,14 +618,15 @@ namespace LibraryService.Tests.Api.Books
             Assert.Equal(new DateTimeOffset(2013, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)), model.PubDate);
             Assert.Equal("someUrl", model.CoverUrl);
             Assert.Equal(3, model.WorkId);
-            Assert.Contains(model.BookAuthors, ba => ba.AuthorId == 1 && ba.AuthorRole == AuthorRole.Translator);
-            Assert.Contains(model.BookAuthors, ba => ba.AuthorId == 2 && ba.AuthorRole == AuthorRole.Narrator);
+            Assert.Contains(model.BookAuthorInfos, ba => ba.AuthorId == 1 && ba.AuthorRole == AuthorRole.Translator);
+            Assert.Contains(model.BookAuthorInfos, ba => ba.AuthorId == 2 && ba.AuthorRole == AuthorRole.Narrator);
         }
 
         [Fact]
         public void GetBookById_validId_CallsService()
         {
             var bookService = Substitute.For<IBookService>();
+            var someDate = new DateTimeOffset(2002, 2, 2, 7, 0, 0, TimeSpan.FromHours(-7));
             bookService.Exists(5).Returns(true);
             bookService.Get(5).Returns(new Book
             {
@@ -622,6 +644,11 @@ namespace LibraryService.Tests.Api.Books
                 {
                     new() { AuthorId = 1, AuthorRole = AuthorRole.Translator },
                     new() { AuthorId = 2, AuthorRole = AuthorRole.Narrator }
+                },
+                Authors = new List<Author>()
+                {
+                    new() { Id = 1, Name = "Name1", Biography = "bio1", BirthDate = someDate, DeathDate = someDate },
+                    new() { Id = 2, Name = "Name2", Biography = "bio2", BirthDate = someDate, DeathDate = someDate }
                 }
             });
             var controller = new BooksController(bookService);
