@@ -101,6 +101,24 @@ namespace LibraryService.Tests.Api.Books
         }
 
         [Fact]
+        public void Delete_SavesToDb()
+        {
+            var service = new BookService(DbContext);
+            var bookId = CreateBook("Title", BookFormat.Paperback, "german", null, null, null, null, null);
+            var workId = CreateWork("WorkTitle", null);
+            var author1Id = CreateAuthor("Author1", null, null, null);
+            var author2Id = CreateAuthor("Author2", null, null, null);
+            AddBookAuthorInRole(bookId, author1Id, AuthorRole.Author);
+            AddBookAuthorInRole(bookId, author2Id, AuthorRole.Translator);
+            AddBookAuthorInRole(bookId, author2Id, AuthorRole.Narrator);
+
+            service.Delete(bookId);
+
+            Assert.Empty(DbContext.Books);
+            Assert.Empty(DbContext.BookAuthor);
+        }
+
+        [Fact]
         public void AddBookAuthor_SavesToDb()
         {
             var service = new BookService(DbContext);

@@ -110,6 +110,18 @@ namespace LibraryService.Api.Books
             return NoContent();
         }
 
+
+        [HttpDelete("{id:int}")]
+        public IActionResult DeleteBook(int id)
+        {
+            if (!_bookService.Exists(id))
+                return NotFound($"The Book Id {id} does not exist!");
+
+            _bookService.Delete(id);
+
+            return NoContent();
+        }
+
         private static BookReadViewModel ToViewModel(Book book)
         {
             return new BookReadViewModel
@@ -124,13 +136,22 @@ namespace LibraryService.Api.Books
                 PubDate = book.PubDate,
                 CoverUrl = book.CoverUrl,
                 WorkId = book.WorkId,
-                BookAuthors = book
+                BookAuthorInfos = book
                     .BookAuthors
-                    .Select(ba => new BookAuthorReadViewModel
-                    {
-                        AuthorId = ba.AuthorId,
-                        AuthorRole = ba.AuthorRole
-                    }).ToList()
+                    .Join(book.Authors,
+                        ba => ba.AuthorId,
+                        a => a.Id,
+                        (ba, a) =>
+                            new BookAuthorInfoReadViewModel
+                            {
+                                AuthorId = ba.AuthorId,
+                                AuthorRole = ba.AuthorRole,
+                                Name = a.Name,
+                                Biography = a.Biography,
+                                BirthDate = a.BirthDate,
+                                DeathDate = a.DeathDate
+                            })
+                    .ToList()
             };
         }
 
