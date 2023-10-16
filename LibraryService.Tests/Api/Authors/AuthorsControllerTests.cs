@@ -10,21 +10,37 @@ namespace LibraryService.Tests.Api.Authors
     public class AuthorsControllerTests
     {
         [Fact]
-        public void CreateAuthor_ReturnsNoContent()
+        public void CreateAuthor_ReturnsValidViewModel()
         {
             var authorService = Substitute.For<IAuthorService>();
-            var controller = new AuthorsController(authorService);
+            var birthDate2 = new DateTimeOffset(819, 1, 2, 7, 0, 0, TimeSpan.FromHours(-7));
+            var deathDate2 = new DateTimeOffset(880, 2, 2, 7, 0, 0, TimeSpan.FromHours(-7));
             var writeViewModel = new AuthorWriteViewModel
             {
-                Name = "Test",
-                Biography = "bio",
-                BirthDate = new DateTimeOffset(1900, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7)),
-                DeathDate = new DateTimeOffset(1980, 3, 4, 7, 0, 0, TimeSpan.FromHours(-7))
-            };
-            
+                Name = "Name2",
+                Biography = "bio2",
+                BirthDate = birthDate2,
+                DeathDate = deathDate2
+            }; 
+            authorService.Create(Arg.Is<AuthorWriteModel>(model =>
+                    model.Name == "Name2"
+                    && model.Biography == "bio2"
+                    && model.BirthDate == birthDate2
+                    && model.DeathDate == deathDate2))
+                .Returns(new AuthorReadViewModel { Id = 2, Name = "Name2", Biography = "bio2", BirthDate = birthDate2, DeathDate = deathDate2 });
+            var controller = new AuthorsController(authorService);
+
             var result = controller.CreateAuthor(writeViewModel);
 
-            Assert.IsType<NoContentResult>(result);
+            Assert.IsType<OkObjectResult>(result);
+            var okObjectResult = (OkObjectResult)result;
+            var model = (AuthorReadViewModel)okObjectResult.Value;
+            Assert.IsAssignableFrom<AuthorReadViewModel>(model);
+            Assert.Equal(2, model.Id);
+            Assert.Equal("Name2", model.Name);
+            Assert.Equal("bio2", model.Biography);
+            Assert.Equal(birthDate2, model.BirthDate);
+            Assert.Equal(deathDate2, model.DeathDate);
         }
 
         [Fact]

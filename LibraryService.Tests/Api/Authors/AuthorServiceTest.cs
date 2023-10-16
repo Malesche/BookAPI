@@ -1,6 +1,8 @@
 ﻿using LibraryService.Api.Authors;
 using LibraryService.Api.Authors.Models;
+using LibraryService.Api.Authors.ViewModels;
 using LibraryService.Persistence;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryService.Tests.Api.Authors
 {
@@ -24,6 +26,30 @@ namespace LibraryService.Tests.Api.Authors
             Assert.Equal("She was very wonderful!", author.Biography);
             Assert.Equal(new DateTimeOffset(1819, 11, 22, 7, 0, 0, TimeSpan.FromHours(-7)), author.BirthDate);
             Assert.Equal(new DateTimeOffset(1880, 12, 22, 7, 0, 0, TimeSpan.FromHours(-7)), author.DeathDate);
+        }
+
+        [Fact]
+        public void Create_ReturnsAuthorReadViewModel()
+        {
+            var service = new AuthorService(DbContext);
+            var birthDate = new DateTimeOffset(1819, 11, 22, 7, 0, 0, TimeSpan.FromHours(-7));
+            var deathDate = new DateTimeOffset(1880, 12, 22, 7, 0, 0, TimeSpan.FromHours(-7));
+            var authorWriteModel = new AuthorWriteModel
+            {
+                Name = "George Eliot",
+                Biography = "She was very wonderful!",
+                BirthDate = birthDate,
+                DeathDate = deathDate
+            };
+
+            var model = service.Create(authorWriteModel);
+
+            Assert.IsType<AuthorReadViewModel>(model);
+            Assert.IsAssignableFrom<AuthorReadViewModel>(model);
+            Assert.Equal("George Eliot", model.Name);
+            Assert.Equal("She was very wonderful!", model.Biography);
+            Assert.Equal(birthDate, model.BirthDate);
+            Assert.Equal(deathDate, model.DeathDate);
         }
 
         [Fact]

@@ -1,11 +1,12 @@
 ﻿using LibraryService.Api.Authors.Models;
+using LibraryService.Api.Authors.ViewModels;
 using LibraryService.Persistence;
 
 namespace LibraryService.Api.Authors
 {
     public interface IAuthorService
     {
-        void Create(AuthorWriteModel model);
+        AuthorReadViewModel Create(AuthorWriteModel model);
 
         void Update(int id, AuthorWriteModel model);
 
@@ -25,7 +26,7 @@ namespace LibraryService.Api.Authors
             _dbContext = dbContext;
         }
 
-        public void Create(AuthorWriteModel model)
+        public AuthorReadViewModel Create(AuthorWriteModel model)
         {
             var author = new Author
             {
@@ -34,9 +35,18 @@ namespace LibraryService.Api.Authors
                 BirthDate = model.BirthDate,
                 DeathDate = model.DeathDate
             };
-
             _dbContext.Authors.Add(author);
             _dbContext.SaveChanges();
+            var authorReadViewModel = new AuthorReadViewModel
+            {
+                Id = author.Id,
+                Name = author.Name,
+                Biography = author.Biography,
+                BirthDate = author.BirthDate,
+                DeathDate = author.DeathDate
+            };
+
+            return authorReadViewModel;
         }
 
         public void Update(int id, AuthorWriteModel model)

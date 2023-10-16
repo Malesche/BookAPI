@@ -19,8 +19,9 @@ namespace LibraryService.Api.Authors
         [HttpPost]
         public IActionResult CreateAuthor([FromBody]AuthorWriteViewModel viewModel)
         {
-            _authorService.Create(WriteModelFromWriteViewModel(viewModel));
-            return NoContent();
+            var authorReadViewModel = _authorService
+                .Create(WriteModelFromWriteViewModel(viewModel));
+            return Ok(authorReadViewModel);
         }
 
         [HttpGet]
