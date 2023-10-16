@@ -1,7 +1,9 @@
 ﻿using DataCollectionPrototype.Core;
 using DataCollectionPrototype.Core.Model;
 using System.Net.Http.Json;
+using LibraryService.Api.Authors.ViewModels;
 using LibraryService.Api.Books.ViewModels;
+using LibraryService.Persistence;
 
 namespace DataCollectionPrototype.TargetWriting
 {
@@ -14,17 +16,15 @@ namespace DataCollectionPrototype.TargetWriting
 
             foreach (var bookModel in data)
             {
-                //var viewModel = new
-                //{
-                //    Title = "Peters lustige C# Geschichten",
-                //    Language = "Deutsch",
-                //    Isbn = "123",
-                //    Isbn13 = "123",
-                //    Description = "1234",
-                //    CoverUrl = "http://google.com",
-                //    BookAuthors = Array.Empty<object>(),
-                    
-                //};
+                var bookAuthorWriteViewModelList = new List<BookAuthorWriteViewModel>();
+                foreach (var bookAuthor in bookModel.BookAuthors)
+                {
+                    var authorResponse = await client.PostAsync(
+                        "/api/Authors",
+                        JsonContent.Create(
+                            WriteModelFromAuthorModel(bookAuthor.Author)));
+                    Console.WriteLine();
+                }
                var response = await client.PostAsync("/api/Books", JsonContent.Create(WriteModelFromBookModel(bookModel)));
             }
         }
@@ -34,7 +34,7 @@ namespace DataCollectionPrototype.TargetWriting
             return new BookWriteViewModel()
             {
                 Title = bookModel.Title,
-                //Format = bookModel.Format,
+                Format = (LibraryService.Persistence.BookFormat?)bookModel.Format,
                 Language = bookModel.Language,
                 Isbn = bookModel.Isbn,
                 Isbn13 = bookModel.Isbn13,
@@ -51,6 +51,27 @@ namespace DataCollectionPrototype.TargetWriting
                 //        AuthorRole = model.AuthorRole
                 //    }).ToList()
             };
+        }
+
+        private static AuthorWriteViewModel WriteModelFromAuthorModel(AuthorModel authorModel)
+        {
+            return new AuthorWriteViewModel
+            {
+                Name = authorModel.Name,
+                Biography = authorModel.Biography,
+                BirthDate = authorModel.BirthDate,
+                DeathDate = authorModel.DeathDate
+            };
+        }
+
+        private async Task SaveAuthorToDbAsync(HttpClient client, AuthorModel authorModel)
+        {
+            await client.PostAsync(
+                "/api/Authors", 
+                JsonContent.Create(
+                    WriteModelFromAuthorModel(authorModel)
+                )
+            );
         }
     }
 }
