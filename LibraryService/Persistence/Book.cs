@@ -1,4 +1,6 @@
-﻿namespace LibraryService.Persistence
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace LibraryService.Persistence
 {
     public class Book
     {
@@ -17,8 +19,13 @@
         public string Description { get; set; }
         
         public DateTimeOffset? PubDate { get; set; }
-        
+
+        public string Publisher { get; set; }
+
         public string CoverUrl { get; set; }
+
+        [Column(TypeName = "NVARCHAR(100)")]
+        public string SourceIds { get; set; }
 
         public ICollection<BookAuthor> BookAuthors { get; set; }
 
