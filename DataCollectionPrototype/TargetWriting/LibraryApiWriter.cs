@@ -3,7 +3,6 @@ using DataCollectionPrototype.Core.Model;
 using System.Net.Http.Json;
 using LibraryService.Api.Authors.ViewModels;
 using LibraryService.Api.Books.ViewModels;
-using LibraryService.Persistence;
 
 namespace DataCollectionPrototype.TargetWriting
 {
@@ -16,22 +15,24 @@ namespace DataCollectionPrototype.TargetWriting
 
             foreach (var bookModel in data)
             {
-                var bookAuthorWriteViewModelList = new List<BookAuthorWriteViewModel>();
+                var bookAuthorList = new List<BookAuthorWriteViewModel>();
                 foreach (var bookAuthor in bookModel.BookAuthors)
                 {
                     var authorResponse = await client.PostAsync(
                         "/api/Authors",
                         JsonContent.Create(
                             WriteModelFromAuthorModel(bookAuthor.Author)));
+                    var author = authorResponse.Content.ReadAsAsync<AuthorReadViewModel>().Result;
+                    bookAuthorList.Add(new BookAuthorWriteViewModel{ AuthorId = author.Id, AuthorRole = (LibraryService.Persistence.AuthorRole?)bookAuthor.AuthorRole});
                     Console.WriteLine();
                 }
-               var response = await client.PostAsync("/api/Books", JsonContent.Create(WriteModelFromBookModel(bookModel)));
+               var response = await client.PostAsync("/api/Books", JsonContent.Create(WriteModelFromBookModel(bookModel, bookAuthorList)));
             }
         }
 
-        private static BookWriteViewModel WriteModelFromBookModel(BookModel bookModel)
+        private static BookWriteViewModel WriteModelFromBookModel(BookModel bookModel, List<BookAuthorWriteViewModel> bookAuthorList)
         {
-            return new BookWriteViewModel()
+            return new BookWriteViewModel
             {
                 Title = bookModel.Title,
                 Format = (LibraryService.Persistence.BookFormat?)bookModel.Format,
@@ -42,14 +43,7 @@ namespace DataCollectionPrototype.TargetWriting
                 PubDate = bookModel.PubDate,
                 CoverUrl = bookModel.CoverUrl,
                 WorkId = null,
-                BookAuthors = new List<BookAuthorWriteViewModel>()
-                    //bookModel
-                //    .BookAuthors
-                //    .Select(model => new BookAuthorWriteModel
-                //    {
-                //        AuthorId = model.AuthorId,
-                //        AuthorRole = model.AuthorRole
-                //    }).ToList()
+                BookAuthors = bookAuthorList
             };
         }
 
@@ -62,16 +56,6 @@ namespace DataCollectionPrototype.TargetWriting
                 BirthDate = authorModel.BirthDate,
                 DeathDate = authorModel.DeathDate
             };
-        }
-
-        private async Task SaveAuthorToDbAsync(HttpClient client, AuthorModel authorModel)
-        {
-            await client.PostAsync(
-                "/api/Authors", 
-                JsonContent.Create(
-                    WriteModelFromAuthorModel(authorModel)
-                )
-            );
         }
     }
 }

@@ -5,6 +5,10 @@ using DataCollectionPrototype.SourceGathering.OpenLibrary.Model;
 namespace DataCollectionPrototype.SourceGathering.OpenLibrary
 {
     // trending/daily.json
+    // fantastic mr fox:     books/OL7353617M.json
+    // der kleine hobbit:    books/OL9032793M.json
+    // middlemarch, parse fehler bio:       books/OL7360063M.json
+    //                                      books/OL8364844M.json
 
     internal class OpenLibraryGatherer : IDataSourceGatherer
     {
@@ -17,7 +21,7 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
             var bookAuthorsList = new List<BookAuthor>();
             var authorsList = new List<AuthorModel>();
 
-            HttpResponseMessage response = await client.GetAsync("books/OL7353617M.json");
+            HttpResponseMessage response = await client.GetAsync("books/OL8364844M.json");
             if (response.IsSuccessStatusCode)
             {
                 book = await response.Content.ReadAsAsync<OpenLibraryBook>();
@@ -53,6 +57,14 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
                     {
                         var author = await GetAuthorAsync(client, a.key);
                         PrintAuthorStuff(author);
+                        var currentAuthor = new AuthorModel { 
+                            Name = author.name, 
+                            //Biography = author.bio,
+                            BirthDate = author.birth_date is not null ? DateTimeOffset.Parse(author.birth_date) : null, 
+                            DeathDate = author.death_date is not null ? DateTimeOffset.Parse(author.death_date) : null
+                        };
+                        authorsList.Add(currentAuthor);
+                        bookAuthorsList.Add(new BookAuthor { AuthorRole = AuthorRole.Author, Book = bookModel, Author = currentAuthor });
                     }
                 }
             }
@@ -94,7 +106,7 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
             }
             Console.WriteLine(author.birth_date);
             Console.WriteLine(author.death_date);
-            Console.WriteLine(author.bio);
+            //Console.WriteLine(author.bio);
         }
 
         private void PrintBookStuff(OpenLibraryBook book)
@@ -119,16 +131,6 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
                     Console.WriteLine(a.key);
                 }
             }
-        }
-
-        private string ExtractContributor(string contribution)
-        {
-            return contribution.Split('(', ')')[0].Trim();
-        }
-
-        private string ExtractRole(string contribution)
-        {
-            return contribution.Split('(', ')')[1];
         }
 
         private BookFormat BookFormatFromPhysicalFormat(string physical_format)

@@ -18,7 +18,7 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary.Model
         public string personal_name { get; set; }
         public string key { get; set; }
         public string birth_date { get; set; }
-        public string bio { get; set; }
+        //public string bio { get; set; }
         public string death_date { get; set; }
         public string wikipedia { get; set; }
         public Link[] links { get; set; }
