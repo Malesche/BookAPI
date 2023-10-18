@@ -134,7 +134,9 @@ namespace LibraryService.Api.Books
                 Isbn13 = book.Isbn13,
                 Description = book.Description,
                 PubDate = book.PubDate,
+                Publisher = book.Publisher,
                 CoverUrl = book.CoverUrl,
+                SourceIds = book.SourceIds,
                 WorkId = book.WorkId,
                 BookAuthorInfos = book
                     .BookAuthors
@@ -166,7 +168,9 @@ namespace LibraryService.Api.Books
                 Isbn13 = viewModel.Isbn13,
                 Description = viewModel.Description,
                 PubDate = viewModel.PubDate,
+                Publisher = viewModel.Publisher,
                 CoverUrl = viewModel.CoverUrl,
+                SourceIds = viewModel.SourceIds,
                 WorkId = viewModel.WorkId,
                 BookAuthors = viewModel
                     .BookAuthors

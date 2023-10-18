@@ -165,7 +165,9 @@ namespace LibraryService.Api.Books
             book.Isbn13 = model.Isbn13;
             book.Description = model.Description;
             book.PubDate = model.PubDate;
+            book.Publisher = model.Publisher;
             book.CoverUrl = model.CoverUrl;
+            book.SourceIds = model.SourceIds;
             book.WorkId = model.WorkId;
             book.BookAuthors = model
                 .BookAuthors

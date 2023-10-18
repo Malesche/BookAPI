@@ -33,7 +33,8 @@ namespace LibraryService.Api.Authors
                 Name = model.Name,
                 Biography = model.Biography,
                 BirthDate = model.BirthDate,
-                DeathDate = model.DeathDate
+                DeathDate = model.DeathDate,
+                SourceIds = model.SourceIds
             };
             _dbContext.Authors.Add(author);
             _dbContext.SaveChanges();
@@ -43,7 +44,8 @@ namespace LibraryService.Api.Authors
                 Name = author.Name,
                 Biography = author.Biography,
                 BirthDate = author.BirthDate,
-                DeathDate = author.DeathDate
+                DeathDate = author.DeathDate,
+                SourceIds = author.SourceIds
             };
 
             return authorReadViewModel;
@@ -56,6 +58,7 @@ namespace LibraryService.Api.Authors
             author.Biography = model.Biography;
             author.BirthDate = model.BirthDate;
             author.DeathDate = model.DeathDate;
+            author.SourceIds = model.SourceIds;
 
             _dbContext.SaveChanges();
         }

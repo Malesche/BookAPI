@@ -18,7 +18,11 @@ namespace LibraryService.Api.Books.Models
 
         public DateTimeOffset? PubDate { get; set; }
 
+        public string Publisher { get; set; }
+
         public string CoverUrl { get; set; }
+
+        public string SourceIds { get; set; }
 
         public int? WorkId { get; set; }
 

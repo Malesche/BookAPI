@@ -12,5 +12,7 @@ namespace LibraryService.Api.Authors.ViewModels
         public DateTimeOffset? BirthDate { get; set; }
 
         public DateTimeOffset? DeathDate { get; set; }
+        
+        public string SourceIds { get; set; }
     }
 }

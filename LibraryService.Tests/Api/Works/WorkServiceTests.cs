@@ -11,11 +11,12 @@ namespace LibraryService.Tests.Api.Works
             var service = new WorkService(DbContext);
             var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
             
-            service.Create("WorkTitle", dateDec1871);
+            service.Create("WorkTitle", dateDec1871, "s");
 
             var work = DbContext.Works.Single();
             Assert.Equal("WorkTitle", work.Title);
             Assert.Equal(new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7)), work.EarliestPubDate);
+            Assert.Equal("s", work.SourceIds);
         }
 
         [Fact]
@@ -23,14 +24,15 @@ namespace LibraryService.Tests.Api.Works
         {
             var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));            
             var dateDec1872 = new DateTimeOffset(1872, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
-            var workId = CreateWork("TitleBeforeUpdate", dateDec1871);
+            var workId = CreateWork("TitleBeforeUpdate", dateDec1871,"s");
             var service = new WorkService(DbContext);
 
-            service.Update(workId, "TitleForUpdate", dateDec1872);
+            service.Update(workId, "TitleForUpdate", dateDec1872, "updated");
 
             var work = DbContext.Works.Single();
             Assert.Equal("TitleForUpdate", work.Title);
             Assert.Equal(dateDec1872, work.EarliestPubDate);
+            Assert.Equal("updated", work.SourceIds);
         }
 
         [Fact]
@@ -39,9 +41,9 @@ namespace LibraryService.Tests.Api.Works
             var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
             var dateDec1872 = new DateTimeOffset(1872, 12, 14, 7, 0, 0, TimeSpan.FromHours(-7));
             var dateDec1873 = new DateTimeOffset(1873, 12, 15, 7, 0, 0, TimeSpan.FromHours(-7));
-            var workId1 = CreateWork("Title1", dateDec1871);
-            var workId2 = CreateWork("Title2", dateDec1872);
-            var workId3 = CreateWork("Title3", dateDec1873);
+            var workId1 = CreateWork("Title1", dateDec1871, "s1");
+            var workId2 = CreateWork("Title2", dateDec1872, "s2");
+            var workId3 = CreateWork("Title3", dateDec1873, "s3");
             var service = new WorkService(DbContext);
 
             var getAllResult = service.GetAll();
@@ -57,19 +59,23 @@ namespace LibraryService.Tests.Api.Works
             Assert.Equal(dateDec1871, work1.EarliestPubDate);
             Assert.Equal(dateDec1872, work2.EarliestPubDate);
             Assert.Equal(dateDec1873, work3.EarliestPubDate);
+            Assert.Equal("s1", work1.SourceIds);
+            Assert.Equal("s2", work2.SourceIds);
+            Assert.Equal("s3", work3.SourceIds);
         }
 
         [Fact]
         public void Get_validId_ReturnsWork()
         {
             var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
-            var workId = CreateWork("WorkTitle", dateDec1871);
+            var workId = CreateWork("WorkTitle", dateDec1871, "s");
             var service = new WorkService(DbContext);
 
             var work = service.Get(workId);
 
             Assert.Equal("WorkTitle", work.Title);
             Assert.Equal(dateDec1871, work.EarliestPubDate);
+            Assert.Equal("s", work.SourceIds);
         }
 
         [Fact]
@@ -86,7 +92,7 @@ namespace LibraryService.Tests.Api.Works
         public void Exists_validId_ReturnsTrue()
         {
             var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
-            var workId = CreateWork("WorkTitle", dateDec1871);
+            var workId = CreateWork("WorkTitle", dateDec1871, "s");
             var service = new WorkService(DbContext);
 
             var exists = service.Exists(workId);
@@ -104,10 +110,10 @@ namespace LibraryService.Tests.Api.Works
             Assert.False(exists);
         }
         
-        private int CreateWork(string title, DateTimeOffset pubDate)
+        private int CreateWork(string title, DateTimeOffset pubDate, string sourceIds)
         {
             using var dbContext = CreateDbContext();
-            var work = new Work() { Title = title, EarliestPubDate = pubDate};
+            var work = new Work() { Title = title, EarliestPubDate = pubDate, SourceIds = sourceIds};
             dbContext.Works.Add(work);
             dbContext.SaveChanges();
 

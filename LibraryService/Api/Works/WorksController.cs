@@ -18,7 +18,7 @@ namespace LibraryService.Api.Works
         [HttpPost]
         public IActionResult CreateWork([FromBody]WorkWriteViewModel viewModel)
         {
-            _workService.Create(viewModel.Title, viewModel.EarliestPubDate);
+            _workService.Create(viewModel.Title, viewModel.EarliestPubDate, viewModel.SourceIds);
             return NoContent();
         }
 
@@ -51,7 +51,7 @@ namespace LibraryService.Api.Works
             if (!_workService.Exists(id))
                 return NotFound($"The Work Id {id} does not exist!");
             
-            _workService.Update(id, viewModel.Title, viewModel.EarliestPubDate);
+            _workService.Update(id, viewModel.Title, viewModel.EarliestPubDate, viewModel.SourceIds);
 
             return NoContent();
         }
@@ -62,7 +62,8 @@ namespace LibraryService.Api.Works
             {
                 Id = work.Id,
                 Title = work.Title,
-                EarliestPubDate = work.EarliestPubDate
+                EarliestPubDate = work.EarliestPubDate,
+                SourceIds = work.SourceIds
             };
         }
     }

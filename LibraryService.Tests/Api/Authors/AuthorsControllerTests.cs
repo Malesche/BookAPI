@@ -20,14 +20,16 @@ namespace LibraryService.Tests.Api.Authors
                 Name = "Name2",
                 Biography = "bio2",
                 BirthDate = birthDate2,
-                DeathDate = deathDate2
+                DeathDate = deathDate2,
+                SourceIds = "OpenLibrary=uuuu/AAAA"
             }; 
             authorService.Create(Arg.Is<AuthorWriteModel>(model =>
                     model.Name == "Name2"
                     && model.Biography == "bio2"
                     && model.BirthDate == birthDate2
-                    && model.DeathDate == deathDate2))
-                .Returns(new AuthorReadViewModel { Id = 2, Name = "Name2", Biography = "bio2", BirthDate = birthDate2, DeathDate = deathDate2 });
+                    && model.DeathDate == deathDate2
+                    && model.SourceIds == "OpenLibrary=uuuu/AAAA"))
+                .Returns(new AuthorReadViewModel { Id = 2, Name = "Name2", Biography = "bio2", BirthDate = birthDate2, DeathDate = deathDate2, SourceIds = "OpenLibrary=uuuu/AAAA" });
             var controller = new AuthorsController(authorService);
 
             var result = controller.CreateAuthor(writeViewModel);
@@ -41,6 +43,7 @@ namespace LibraryService.Tests.Api.Authors
             Assert.Equal("bio2", model.Biography);
             Assert.Equal(birthDate2, model.BirthDate);
             Assert.Equal(deathDate2, model.DeathDate);
+            Assert.Equal("OpenLibrary=uuuu/AAAA", model.SourceIds);
         }
 
         [Fact]
@@ -55,7 +58,8 @@ namespace LibraryService.Tests.Api.Authors
                 Name = "Test",
                 Biography = "bio",
                 BirthDate = birthDate,
-                DeathDate = deathDate
+                DeathDate = deathDate,
+                SourceIds = "s"
             };
 
             controller.CreateAuthor(writeViewModel);
@@ -64,7 +68,8 @@ namespace LibraryService.Tests.Api.Authors
                 model.Name == "Test"
                 && model.Biography == "bio"
                 && model.BirthDate == birthDate
-                && model.DeathDate == deathDate));
+                && model.DeathDate == deathDate
+                && model.SourceIds == "s"));
         }
 
         [Fact]
@@ -77,9 +82,9 @@ namespace LibraryService.Tests.Api.Authors
             var deathDate2 = new DateTimeOffset(880, 2, 2, 7, 0, 0, TimeSpan.FromHours(-7));
             authorService.GetAll().Returns(new List<Author>
                 {
-                    new() { Id = 1, Name = "Name1", Biography = "bio1", BirthDate = birthDate1, DeathDate = deathDate1},
-                    new() { Id = 2, Name = "Name2", Biography = "bio2", BirthDate = birthDate2, DeathDate = deathDate2 },
-                    new() { Id = 3, Name = "Name3", Biography = "bio3", BirthDate = birthDate1, DeathDate = deathDate1 }
+                    new() { Id = 1, Name = "Name1", Biography = "bio1", BirthDate = birthDate1, DeathDate = deathDate1, SourceIds = "s1" },
+                    new() { Id = 2, Name = "Name2", Biography = "bio2", BirthDate = birthDate2, DeathDate = deathDate2, SourceIds = "s2" },
+                    new() { Id = 3, Name = "Name3", Biography = "bio3", BirthDate = birthDate1, DeathDate = deathDate1, SourceIds = "s3" }
                 });
             var controller = new AuthorsController(authorService);
 
@@ -96,16 +101,19 @@ namespace LibraryService.Tests.Api.Authors
             Assert.Equal("bio1", viewModelCollection[0].Biography);
             Assert.Equal(birthDate1, viewModelCollection[0].BirthDate);
             Assert.Equal(deathDate1, viewModelCollection[0].DeathDate);
+            Assert.Equal("s1", viewModelCollection[0].SourceIds);
             Assert.Equal(2, viewModelCollection[1].Id);
             Assert.Equal("Name2", viewModelCollection[1].Name);
             Assert.Equal("bio2", viewModelCollection[1].Biography);
             Assert.Equal(birthDate2, viewModelCollection[1].BirthDate);
             Assert.Equal(deathDate2, viewModelCollection[1].DeathDate);
+            Assert.Equal("s2", viewModelCollection[1].SourceIds);
             Assert.Equal(3, viewModelCollection[2].Id);
             Assert.Equal("Name3", viewModelCollection[2].Name);
             Assert.Equal("bio3", viewModelCollection[2].Biography);
             Assert.Equal(birthDate1, viewModelCollection[2].BirthDate);
             Assert.Equal(deathDate1, viewModelCollection[2].DeathDate);
+            Assert.Equal("s3", viewModelCollection[2].SourceIds);
         }
 
         [Fact]
@@ -125,7 +133,7 @@ namespace LibraryService.Tests.Api.Authors
             var authorService = Substitute.For<IAuthorService>();
             var birthDate2 = new DateTimeOffset(819, 1, 2, 7, 0, 0, TimeSpan.FromHours(-7));
             var deathDate2 = new DateTimeOffset(880, 2, 2, 7, 0, 0, TimeSpan.FromHours(-7));
-            authorService.Get(2).Returns(new Author { Id = 2, Name = "Name2", Biography = "bio2", BirthDate = birthDate2, DeathDate = deathDate2 });
+            authorService.Get(2).Returns(new Author { Id = 2, Name = "Name2", Biography = "bio2", BirthDate = birthDate2, DeathDate = deathDate2, SourceIds = "s2" });
             var controller = new AuthorsController(authorService);
 
             var result = controller.GetAuthorById(2);
@@ -139,6 +147,7 @@ namespace LibraryService.Tests.Api.Authors
             Assert.Equal("bio2", model.Biography);
             Assert.Equal(birthDate2, model.BirthDate);
             Assert.Equal(deathDate2, model.DeathDate);
+            Assert.Equal("s2", model.SourceIds);
         }
 
         [Fact]
@@ -147,7 +156,7 @@ namespace LibraryService.Tests.Api.Authors
             var authorService = Substitute.For<IAuthorService>();
             var birthDate2 = new DateTimeOffset(819, 1, 2, 7, 0, 0, TimeSpan.FromHours(-7));
             var deathDate2 = new DateTimeOffset(880, 2, 2, 7, 0, 0, TimeSpan.FromHours(-7));
-            authorService.Get(2).Returns(new Author { Id = 2, Name = "Name2", Biography = "bio2", BirthDate = birthDate2, DeathDate = deathDate2 });
+            authorService.Get(2).Returns(new Author { Id = 2, Name = "Name2", Biography = "bio2", BirthDate = birthDate2, DeathDate = deathDate2, SourceIds = "s2" });
             var controller = new AuthorsController(authorService);
 
             controller.GetAuthorById(2);
@@ -176,7 +185,7 @@ namespace LibraryService.Tests.Api.Authors
             var birthDate2 = new DateTimeOffset(819, 1, 2, 7, 0, 0, TimeSpan.FromHours(-7));
             var deathDate2 = new DateTimeOffset(880, 2, 2, 7, 0, 0, TimeSpan.FromHours(-7));
 
-            controller.UpdateAuthor(2, new AuthorWriteViewModel { Name = "Name2", Biography = "bio2", BirthDate = birthDate2, DeathDate = deathDate2 });
+            controller.UpdateAuthor(2, new AuthorWriteViewModel { Name = "Name2", Biography = "bio2", BirthDate = birthDate2, DeathDate = deathDate2, SourceIds = "s2" });
 
             authorService
                 .Received(1)
@@ -184,7 +193,8 @@ namespace LibraryService.Tests.Api.Authors
                     model.Name == "Name2"
                     && model.Biography == "bio2"
                     && model.BirthDate ==birthDate2
-                    && model.DeathDate == deathDate2));
+                    && model.DeathDate == deathDate2
+                    && model.SourceIds == "s2"));
         }
 
         [Fact]
@@ -194,7 +204,7 @@ namespace LibraryService.Tests.Api.Authors
             authorService.Exists(5).Returns(true);
             var controller = new AuthorsController(authorService);
 
-            var result = controller.UpdateAuthor(5, new AuthorWriteViewModel() { Name = "Name2", Biography = "bio2", BirthDate = null, DeathDate = null });
+            var result = controller.UpdateAuthor(5, new AuthorWriteViewModel() { Name = "Name2", Biography = "bio2", BirthDate = null, DeathDate = null, SourceIds = "s2" });
 
             Assert.IsType<NoContentResult>(result);
         }
@@ -206,7 +216,7 @@ namespace LibraryService.Tests.Api.Authors
             authorService.Exists(2).Returns(false);
             var controller = new AuthorsController(authorService);
 
-            var result = controller.UpdateAuthor(2, new AuthorWriteViewModel() { Name = "Name2", Biography = "bio2", BirthDate = null, DeathDate = null });
+            var result = controller.UpdateAuthor(2, new AuthorWriteViewModel() { Name = "Name2", Biography = "bio2", BirthDate = null, DeathDate = null, SourceIds = "s2" });
 
             Assert.IsType<NotFoundObjectResult>(result);
         }
@@ -218,7 +228,7 @@ namespace LibraryService.Tests.Api.Authors
             authorService.Exists(2).Returns(false);
             var controller = new AuthorsController(authorService);
 
-            controller.UpdateAuthor(2, new AuthorWriteViewModel() { Name = "Name2", Biography = "bio2", BirthDate = null, DeathDate = null });
+            controller.UpdateAuthor(2, new AuthorWriteViewModel() { Name = "Name2", Biography = "bio2", BirthDate = null, DeathDate = null, SourceIds = "s2" });
 
             authorService.DidNotReceive().Update(Arg.Any<int>(), Arg.Any<AuthorWriteModel>());
         }

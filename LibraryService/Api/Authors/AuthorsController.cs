@@ -44,22 +44,8 @@ namespace LibraryService.Api.Authors
                 return NotFound();
             }
 
-            var viewModel = ToViewModel(author);
-
-            return Ok(viewModel);
+            return Ok(ToViewModel(author));
         }
-
-        //[HttpGet("{id:int}")]
-        //public IActionResult GetBooksByAuthorId(int id)
-        //{
-        //    var author = _authorService.Get(id);
-        //    if (author == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok(author.Books);
-        //}
 
         [HttpPut("{id:int}")]
         public IActionResult UpdateAuthor(int id, [FromBody] AuthorWriteViewModel viewModel)
@@ -80,7 +66,8 @@ namespace LibraryService.Api.Authors
                 Name = author.Name,
                 Biography = author.Biography,
                 BirthDate = author.BirthDate,
-                DeathDate = author.DeathDate
+                DeathDate = author.DeathDate,
+                SourceIds = author.SourceIds
             };
         }
 
@@ -91,7 +78,8 @@ namespace LibraryService.Api.Authors
                 Name = viewModel.Name,
                 Biography = viewModel.Biography,
                 BirthDate = viewModel.BirthDate,
-                DeathDate = viewModel.DeathDate
+                DeathDate = viewModel.DeathDate,
+                SourceIds = viewModel.SourceIds
             };
         }
     }

@@ -14,7 +14,7 @@ namespace LibraryService.Tests.Api.Works
             var workService = Substitute.For<IWorkService>();
             var controller = new WorksController(workService);
 
-            var result = controller.CreateWork(new WorkWriteViewModel { Title = "WorkTitle", EarliestPubDate = null });
+            var result = controller.CreateWork(new WorkWriteViewModel { Title = "WorkTitle", EarliestPubDate = null, SourceIds = "s" });
 
             Assert.IsType<NoContentResult>(result);
         }
@@ -26,9 +26,9 @@ namespace LibraryService.Tests.Api.Works
             var controller = new WorksController(workService);
             var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
 
-            controller.CreateWork(new WorkWriteViewModel { Title = "WorkTitle", EarliestPubDate = dateDec1871 });
+            controller.CreateWork(new WorkWriteViewModel { Title = "WorkTitle", EarliestPubDate = dateDec1871, SourceIds = "s" });
 
-            workService.Received(1).Create("WorkTitle", dateDec1871);
+            workService.Received(1).Create("WorkTitle", dateDec1871, "s");
         }
 
         [Fact]
@@ -127,9 +127,9 @@ namespace LibraryService.Tests.Api.Works
             var controller = new WorksController(workService);
             var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
 
-            controller.UpdateWork(5, new WorkWriteViewModel { Title = "NewTitle", EarliestPubDate = dateDec1871});
+            controller.UpdateWork(5, new WorkWriteViewModel { Title = "NewTitle", EarliestPubDate = dateDec1871, SourceIds = "s"});
 
-            workService.Received(1).Update(5, "NewTitle", dateDec1871);
+            workService.Received(1).Update(5, "NewTitle", dateDec1871, "s");
         }
 
         [Fact]
@@ -153,7 +153,7 @@ namespace LibraryService.Tests.Api.Works
 
             controller.UpdateWork(5, new WorkWriteViewModel { Title = "NewTitle", EarliestPubDate = null });
 
-            workService.DidNotReceive().Update(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>());
+            workService.DidNotReceive().Update(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<string>());
         }
 
         [Fact]

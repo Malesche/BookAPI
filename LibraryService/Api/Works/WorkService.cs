@@ -4,9 +4,9 @@ namespace LibraryService.Api.Works
 {
     public interface IWorkService
     {
-        public void Create(string title, DateTimeOffset? earliestPubDate);
+        public void Create(string title, DateTimeOffset? earliestPubDate, string sourceIds);
 
-        public void Update(int id, string title, DateTimeOffset? earliestPubDate);
+        public void Update(int id, string title, DateTimeOffset? earliestPubDate, string sourceIds);
 
         public IEnumerable<Work> GetAll();
 
@@ -24,23 +24,25 @@ namespace LibraryService.Api.Works
             _dbContext = dbContext;
         }
 
-        public void Create(string title, DateTimeOffset? earliestPubDate)
+        public void Create(string title, DateTimeOffset? earliestPubDate, string sourceIds)
         {
             var work = new Work
             {
                 Title = title,
-                EarliestPubDate = earliestPubDate
+                EarliestPubDate = earliestPubDate,
+                SourceIds = sourceIds
             };
 
             _dbContext.Works.Add(work);
             _dbContext.SaveChanges();
         }
 
-        public void Update(int id, string title, DateTimeOffset? earliestPubDate)
+        public void Update(int id, string title, DateTimeOffset? earliestPubDate, string sourceIds)
         {
             var work = _dbContext.Works.First(a => a.Id == id);
             work.Title = title;
             work.EarliestPubDate = earliestPubDate;
+            work.SourceIds = sourceIds;
 
             _dbContext.SaveChanges();
         }
