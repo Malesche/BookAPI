@@ -41,7 +41,9 @@ namespace DataCollectionPrototype.TargetWriting
                 Isbn13 = bookModel.Isbn13,
                 Description = bookModel.Description,
                 PubDate = bookModel.PubDate,
+                Publisher = bookModel.Publisher,
                 CoverUrl = bookModel.CoverUrl,
+                SourceIds = bookModel.SourceIds,
                 WorkId = null,
                 BookAuthors = bookAuthorList
             };
@@ -54,7 +56,8 @@ namespace DataCollectionPrototype.TargetWriting
                 Name = authorModel.Name,
                 Biography = authorModel.Biography,
                 BirthDate = authorModel.BirthDate,
-                DeathDate = authorModel.DeathDate
+                DeathDate = authorModel.DeathDate,
+                SourceIds = authorModel.SourceIds
             };
         }
     }

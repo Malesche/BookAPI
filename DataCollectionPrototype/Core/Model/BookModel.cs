@@ -15,8 +15,12 @@
         public string Description { get; set; }
         
         public DateTimeOffset? PubDate { get; set; }
-        
+
+        public string Publisher { get; set; }
+
         public string CoverUrl { get; set; }
+
+        public string SourceIds { get; set; }
 
         public List<BookAuthor> BookAuthors { get; set; } = new();
 

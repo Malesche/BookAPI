@@ -10,6 +10,8 @@
 
         public DateTimeOffset? DeathDate { get; set; }
 
+        public string SourceIds { get; set; }
+        
         public List<BookAuthor> BookAuthor { get; set; } = new();
         
         public List<BookModel> Books { get; set; } = new();

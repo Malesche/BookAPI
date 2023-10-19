@@ -1,32 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DataCollectionPrototype.SourceGathering.OpenLibrary.Model
+﻿namespace DataCollectionPrototype.SourceGathering.OpenLibrary.Model
 {
     public class OpenLibraryBook
     {
         public string title { get; set; }
-        public string key { get; set; }
+        public string physical_format { get; set; }
+        public Language[] languages { get; set; }
+        public string[] isbn_10 { get; set; }
+        public string[] isbn_13 { get; set; }
+        public string publish_date { get; set; }
+        public string[] publishers { get; set; }
+        public int[] covers { get; set; }
+        public string key { get; set; } 
+
         public Author[] authors { get; set; }
         public string[] contributions { get; set; }
 
 
-        public string[] publishers { get; set; }
         public string subtitle { get; set; }
         public string weight { get; set; }
-        public int[] covers { get; set; }
         public string edition_name { get; set; }
-        public string physical_format { get; set; }
         public string[] subjects { get; set; }
-        public string[] isbn_13 { get; set; }
         public string[] source_records { get; set; }
         public Identifiers identifiers { get; set; }
-        public Language[] languages { get; set; }
-        public string[] isbn_10 { get; set; }
-        public string publish_date { get; set; }
         public Work[] works { get; set; }
         public Type type { get; set; }
         public string physical_dimensions { get; set; }

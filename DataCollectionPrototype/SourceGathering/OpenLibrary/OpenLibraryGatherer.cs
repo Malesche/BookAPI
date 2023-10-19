@@ -5,82 +5,92 @@ using Newtonsoft.Json.Linq;
 
 namespace DataCollectionPrototype.SourceGathering.OpenLibrary
 {
-    // trending/daily.json
-    // fantastic mr fox:     books/OL7353617M.json
-    // der kleine hobbit:    books/OL9032793M.json
-    // middlemarch, parse fehler bio:       books/OL7360063M.json
-    //                                      books/OL8364844M.json
-    // Roald Dahl: /authors/OL34184A
-    // George Eliot: /authors/OL24528A
-
     internal class OpenLibraryGatherer : IDataSourceGatherer
     {
         public async Task<BookModel[]> CollectAsync()
         {
             using var client = new HttpClient();
+            client.Timeout = TimeSpan.FromSeconds(10);
             client.BaseAddress = new Uri("https://openlibrary.org/");
-            OpenLibraryBook book;
-            BookModel bookModel = null;
+
+            var books = new List<BookModel>();
+            
+            try
+            {
+                var response = await client.GetAsync("books/OL34982429M.json");
+                if (response.IsSuccessStatusCode)
+                {
+                    var bookModel = await ParseBookAsync(client, response);
+                    books.Add(bookModel);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return books.ToArray();
+        }
+
+        private async Task<BookModel> ParseBookAsync(HttpClient client, HttpResponseMessage response)
+        {
+            var book = await response.Content.ReadAsAsync<OpenLibraryBook>();
+
             var bookAuthorsList = new List<BookAuthor>();
             var authorsList = new List<AuthorModel>();
 
-            HttpResponseMessage response = await client.GetAsync("books/OL7353617M.json");
-            if (response.IsSuccessStatusCode)
+            PrintBookStuff(book);
+
+            var bookModel = new BookModel
             {
-                book = await response.Content.ReadAsAsync<OpenLibraryBook>();
+                Title = book.title,
+                Format = BookFormatFromPhysicalFormat(book.physical_format),
+                Language = book.languages?[0].key,
+                Isbn13 = book.isbn_13?[0],
+                Isbn = book.isbn_10?[0],
+                PubDate = DateTimeOffsetFromPublish_date(book.publish_date),
+                Publisher = book.publishers[0],
+                //CoverUrl = book.covers[0].ToString(),
+                SourceIds = "OpenLibrary=" + book.key
+            };
 
-                PrintBookStuff(book);
-
-                bookModel = new BookModel
+            if (book.contributions != null)
+            {
+                foreach (var contribution in book.contributions)
                 {
-                    Title = book.title,
-                    Format = BookFormatFromPhysicalFormat(book.physical_format),
-                    Language = book.languages?[0].key,
-                    Isbn13 = book.isbn_13?[0],
-                    Isbn = book.isbn_10?[0],
-                };
-
-                if (book.contributions != null)
-                {
-                    foreach (var contribution in book.contributions)
-                    {
-                        var name = contribution.Split('(', ')')[0].Trim();
-                        var role = contribution.Split('(', ')')[1];
-                        Console.WriteLine($"contributor: {name}, {role}");
-                        var currentAuthor = new AuthorModel { Name = name };
-                        authorsList.Add( currentAuthor );
-                        bookAuthorsList.Add( new BookAuthor {AuthorRole = StringToAuthorRole(role), Book = bookModel, Author = currentAuthor});
-                    }
-                }
-
-                if (book.authors != null)
-                {
-                    foreach (var a in book.authors)
-                    {
-                        var authorJsonString = await GetAuthorAsync(client, a.key);
-                        JObject authorJObject = JObject.Parse(authorJsonString);
-                        // Console.WriteLine(authorJObject.ToString());
-
-                        var currentAuthor = new AuthorModel
-                        {
-                            Name = (string)authorJObject["name"],
-                            Biography = BiographyStringFromObjectOrString(authorJObject["bio"]),
-                            BirthDate = authorJObject["birth_date"] is not null ? DateTimeOffset.Parse((string)authorJObject["birth_date"]) : null,
-                            DeathDate = authorJObject["death_date"] is not null ? DateTimeOffset.Parse((string)authorJObject["death_date"]) : null,
-                        };
-                        authorsList.Add(currentAuthor);
-                        bookAuthorsList.Add(new BookAuthor { AuthorRole = AuthorRole.Author, Book = bookModel, Author = currentAuthor });
-                    }
+                    var name = contribution.Split('(', ')')[0].Trim();
+                    var role = contribution.Split('(', ')')[1];
+                    Console.WriteLine($"contributor: {name}, {role}");
+                    var currentAuthor = new AuthorModel { Name = name, SourceIds = "OpenLibraryContribution" };
+                    authorsList.Add(currentAuthor);
+                    bookAuthorsList.Add(new BookAuthor { AuthorRole = StringToAuthorRole(role), Book = bookModel, Author = currentAuthor });
                 }
             }
 
+            if (book.authors != null)
+            {
+                foreach (var a in book.authors)
+                {
+                    var authorJsonString = await GetAuthorAsync(client, a.key);
+                    JObject authorJObject = JObject.Parse(authorJsonString);
+                    Console.WriteLine(authorJObject.ToString());
+
+                    var currentAuthor = new AuthorModel
+                    {
+                        Name = (string)authorJObject["name"],
+                        Biography = BiographyStringFromObjectOrString(authorJObject["bio"]),
+                        BirthDate = authorJObject["birth_date"] is not null ? DateTimeOffset.Parse((string)authorJObject["birth_date"]) : null,
+                        DeathDate = authorJObject["death_date"] is not null ? DateTimeOffset.Parse((string)authorJObject["death_date"]) : null,
+                        SourceIds = "OpenLibrary=" + (string)authorJObject["key"]
+                    };
+                    authorsList.Add(currentAuthor);
+                    bookAuthorsList.Add(new BookAuthor { AuthorRole = AuthorRole.Author, Book = bookModel, Author = currentAuthor });
+                }
+            }
             bookModel.Authors = authorsList;
             bookModel.BookAuthors = bookAuthorsList;
 
-            return new BookModel[]
-            {
-                bookModel
-            };
+            return bookModel;
         }
 
         private async Task<string> GetAuthorAsync(HttpClient client, string authorKey)
@@ -98,6 +108,8 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
 
         private string BiographyStringFromObjectOrString(JToken bio)
         {
+            if (bio == null)
+                return null;
             if (bio.Type == JTokenType.Object)
                 return (string)bio["value"];
 
@@ -113,7 +125,19 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
                 case "Audio CD":
                     return BookFormat.Audiobook;
             }
+            Console.WriteLine("physical_format: " + physical_format);
             return BookFormat.UnknownBinding;
+        }
+
+        private DateTimeOffset? DateTimeOffsetFromPublish_date(string publishDate)
+        {
+            if (DateTimeOffset.TryParse(publishDate, out var result))
+                return result;
+            else if (Int32.TryParse(publishDate, out int intResult))
+            {
+                return new DateTimeOffset(intResult, 1, 1, 0, 0, 0, TimeSpan.Zero);
+            }
+            return null;
         }
 
         private AuthorRole? StringToAuthorRole(string role)
@@ -128,6 +152,7 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
                     return AuthorRole.Illustrator;
             }
 
+            Console.WriteLine("Author Role: " + role);
             return null;
         }
             
@@ -154,5 +179,5 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
                 }
             }
         }
-}
+    }
 }
