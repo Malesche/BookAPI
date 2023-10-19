@@ -14,21 +14,67 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
             client.BaseAddress = new Uri("https://openlibrary.org/");
 
             var books = new List<BookModel>();
-            
-            try
+
+            var isbnList = new List<string>
             {
-                var response = await client.GetAsync("books/OL34982429M.json");
-                if (response.IsSuccessStatusCode)
+                //"1400128633",
+                //"0374600902",
+                //"1250114578",
+                //"1690598433",
+                //"1324065400",
+                //"0374600457",
+                //"9798200717064",
+                //"9781400128631",
+                //"9780374600907",
+                //"9781250114570",
+                //"9781690598435",
+                //"9781324065401",
+                //"9780374600457"
+
+                //"9781427268297",
+                //"9798212272674",
+                //"9780735239661",
+                //"9781558328952",
+                //"",
+                //"",
+                //"9781250838001",
+                //"",
+                //"9781797221410",
+                //"9781483015996",
+                //"9780593539644",
+                //"9781101871515"
+
+                "9783813503708",
+                "9780593539569",
+                "9781774582664",
+                "9781957363622",
+                "9780679738046",
+                "9781632157096",
+                "9783832182915",
+                "9783867176958",
+                "9780063277014",
+                "9781250821553"
+
+
+            };
+
+            foreach (var isbn in isbnList)
+            {
+                Console.WriteLine("trying " + isbn);
+                try
                 {
-                    var bookModel = await ParseBookAsync(client, response);
-                    books.Add(bookModel);
+                    var response = await client.GetAsync("isbn/" + isbn + ".json");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var bookModel = await ParseBookAsync(client, response);
+                        books.Add(bookModel);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
                 }
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-
             return books.ToArray();
         }
 
@@ -39,7 +85,8 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
             var bookAuthorsList = new List<BookAuthor>();
             var authorsList = new List<AuthorModel>();
 
-            PrintBookStuff(book);
+            Console.WriteLine(book.title);
+            //PrintBookStuff(book);
 
             var bookModel = new BookModel
             {
@@ -48,9 +95,9 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
                 Language = book.languages?[0].key,
                 Isbn13 = book.isbn_13?[0],
                 Isbn = book.isbn_10?[0],
-                PubDate = DateTimeOffsetFromPublish_date(book.publish_date),
-                Publisher = book.publishers[0],
-                //CoverUrl = book.covers[0].ToString(),
+                PubDate = DateTimeOffsetFromString(book.publish_date),
+                Publisher = book.publishers?[0],
+                //CoverUrl = book.covers[0]?.ToString(),
                 SourceIds = "OpenLibrary=" + book.key
             };
 
@@ -59,7 +106,7 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
                 foreach (var contribution in book.contributions)
                 {
                     var name = contribution.Split('(', ')')[0].Trim();
-                    var role = contribution.Split('(', ')')[1];
+                    var role = contribution.Split('(', ')').Length > 1 ? contribution.Split('(', ')')[1] : "unknown role";
                     Console.WriteLine($"contributor: {name}, {role}");
                     var currentAuthor = new AuthorModel { Name = name, SourceIds = "OpenLibraryContribution" };
                     authorsList.Add(currentAuthor);
@@ -73,14 +120,14 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
                 {
                     var authorJsonString = await GetAuthorAsync(client, a.key);
                     JObject authorJObject = JObject.Parse(authorJsonString);
-                    Console.WriteLine(authorJObject.ToString());
+                    //Console.WriteLine(authorJObject.ToString());
 
                     var currentAuthor = new AuthorModel
                     {
                         Name = (string)authorJObject["name"],
                         Biography = BiographyStringFromObjectOrString(authorJObject["bio"]),
-                        BirthDate = authorJObject["birth_date"] is not null ? DateTimeOffset.Parse((string)authorJObject["birth_date"]) : null,
-                        DeathDate = authorJObject["death_date"] is not null ? DateTimeOffset.Parse((string)authorJObject["death_date"]) : null,
+                        BirthDate = authorJObject["birth_date"] is not null ? DateTimeOffsetFromString((string)authorJObject["birth_date"]) : null,
+                        DeathDate = authorJObject["death_date"] is not null ? DateTimeOffsetFromString((string)authorJObject["death_date"]) : null,
                         SourceIds = "OpenLibrary=" + (string)authorJObject["key"]
                     };
                     authorsList.Add(currentAuthor);
@@ -117,23 +164,29 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
         }
 
         private BookFormat BookFormatFromPhysicalFormat(string physical_format)
-        {
+        {   
+            Console.WriteLine("physical_format: " + physical_format);
             switch (physical_format)
             {
+                case "Hardcover":
+                    return BookFormat.Hardcover;
                 case "hardcover":
                     return BookFormat.Hardcover;
                 case "Audio CD":
                     return BookFormat.Audiobook;
+                case "Paperback":
+                    return BookFormat.Paperback;
+                case "paperback":
+                    return BookFormat.Paperback;
             }
-            Console.WriteLine("physical_format: " + physical_format);
             return BookFormat.UnknownBinding;
         }
 
-        private DateTimeOffset? DateTimeOffsetFromPublish_date(string publishDate)
+        private DateTimeOffset? DateTimeOffsetFromString(string dateString)
         {
-            if (DateTimeOffset.TryParse(publishDate, out var result))
+            if (DateTimeOffset.TryParse(dateString, out var result))
                 return result;
-            else if (Int32.TryParse(publishDate, out int intResult))
+            else if (Int32.TryParse(dateString, out int intResult))
             {
                 return new DateTimeOffset(intResult, 1, 1, 0, 0, 0, TimeSpan.Zero);
             }
@@ -150,6 +203,12 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
                     return AuthorRole.Translator;
                 case "Illustrator":
                     return AuthorRole.Illustrator;
+                case "Editor":
+                    return AuthorRole.Editor;
+                case "Contributor":
+                    return AuthorRole.Contributor;
+                case "unknown role":
+                    return AuthorRole.Contributor;
             }
 
             Console.WriteLine("Author Role: " + role);
