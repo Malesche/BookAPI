@@ -14,9 +14,23 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
             client.BaseAddress = new Uri("https://openlibrary.org/");
 
             var books = new List<BookModel>();
-
             var isbnList = new List<string>
             {
+                "9781797161075",
+                "9780231184083",
+                "9780593317211",
+                "9781786633071",
+                "9781797157573",
+                "9781250900906",
+                "9781797156132",
+                "9780156252348",
+                "9781642861044",
+                "9780593421062",
+                "9781617298301",
+                "9783839812372",
+                "9780745634272",
+                "9783596147700"
+
                 //"1400128633",
                 //"0374600902",
                 //"1250114578",
@@ -44,23 +58,21 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
                 //"9780593539644",
                 //"9781101871515"
 
-                "9783813503708",
-                "9780593539569",
-                "9781774582664",
-                "9781957363622",
-                "9780679738046",
-                "9781632157096",
-                "9783832182915",
-                "9783867176958",
-                "9780063277014",
-                "9781250821553"
-
-
+                //"9783813503708",
+                //"9780593539569",
+                //"9781774582664",
+                //"9781957363622",
+                //"9780679738046",
+                //"9781632157096",
+                //"9783832182915",
+                //"9783867176958",
+                //"9780063277014",
+                //"9781250821553"
             };
 
             foreach (var isbn in isbnList)
             {
-                Console.WriteLine("trying " + isbn);
+                Console.WriteLine("trying OpenLibrary: " + isbn);
                 try
                 {
                     var response = await client.GetAsync("isbn/" + isbn + ".json");
@@ -101,7 +113,13 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
                 SourceIds = "OpenLibrary=" + book.key
             };
 
-            if (book.contributions != null)
+            if (book.works is not null)
+            {
+                var work = await GetWorkAsync(client, book.works[0].key);
+                Console.WriteLine(work.key);
+            }
+
+            if (book.contributions is not null)
             {
                 foreach (var contribution in book.contributions)
                 {
@@ -114,7 +132,7 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
                 }
             }
 
-            if (book.authors != null)
+            if (book.authors is not null)
             {
                 foreach (var a in book.authors)
                 {
@@ -138,6 +156,21 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
             bookModel.BookAuthors = bookAuthorsList;
 
             return bookModel;
+        }
+
+        private async Task<OpenLibraryWork> GetWorkAsync(HttpClient client, string workKey)
+        {
+            HttpResponseMessage response = await client.GetAsync(workKey + ".json");
+            if (response.IsSuccessStatusCode)
+            {
+                var work = await response.Content.ReadAsAsync<OpenLibraryWork>();
+
+                var workJsonString = await response.Content.ReadAsStringAsync();
+
+                return work;
+            }
+
+            return null;
         }
 
         private async Task<string> GetAuthorAsync(HttpClient client, string authorKey)
@@ -206,8 +239,6 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
                 case "Editor":
                     return AuthorRole.Editor;
                 case "Contributor":
-                    return AuthorRole.Contributor;
-                case "unknown role":
                     return AuthorRole.Contributor;
             }
 
