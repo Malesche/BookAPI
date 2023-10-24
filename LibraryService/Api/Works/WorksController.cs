@@ -18,8 +18,9 @@ namespace LibraryService.Api.Works
         [HttpPost]
         public IActionResult CreateWork([FromBody]WorkWriteViewModel viewModel)
         {
-            _workService.Create(viewModel.Title, viewModel.EarliestPubDate, viewModel.SourceIds);
-            return NoContent();
+            var workReadViewModel = _workService
+                .Create(viewModel.Title, viewModel.EarliestPubDate, viewModel.SourceIds);
+            return Ok(workReadViewModel);
         }
 
         [HttpGet]

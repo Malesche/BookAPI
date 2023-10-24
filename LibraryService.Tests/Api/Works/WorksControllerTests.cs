@@ -1,4 +1,5 @@
-﻿using LibraryService.Api.Works;
+﻿using LibraryService.Api.Authors.ViewModels;
+using LibraryService.Api.Works;
 using LibraryService.Api.Works.ViewModels;
 using LibraryService.Persistence;
 using Microsoft.AspNetCore.Mvc;
@@ -9,14 +10,24 @@ namespace LibraryService.Tests.Api.Works
     public class WorksControllerTests
     {
         [Fact]
-        public void CreateWork_ReturnsNoContent()
+        public void CreateWork_ReturnsValidViewModel()
         {
             var workService = Substitute.For<IWorkService>();
+            var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
+            workService.Create(Arg.Is<string>("Title1"), dateDec1871, Arg.Is<string>("sourceIds"))
+                .Returns(new WorkReadViewModel { Id = 1, Title = "Title1", EarliestPubDate = dateDec1871, SourceIds = "sourceIds" });
             var controller = new WorksController(workService);
 
-            var result = controller.CreateWork(new WorkWriteViewModel { Title = "WorkTitle", EarliestPubDate = null, SourceIds = "s" });
+            var result = controller.CreateWork(new WorkWriteViewModel { Title = "Title1", EarliestPubDate = dateDec1871, SourceIds = "sourceIds" });
 
-            Assert.IsType<NoContentResult>(result);
+            Assert.IsType<OkObjectResult>(result);
+            var okObjectResult = (OkObjectResult)result;
+            var model = (WorkReadViewModel)okObjectResult.Value;
+            Assert.IsAssignableFrom<WorkReadViewModel>(model);
+            Assert.Equal(1, model.Id);
+            Assert.Equal("Title1", model.Title);
+            Assert.Equal(dateDec1871, model.EarliestPubDate);
+            Assert.Equal("sourceIds", model.SourceIds);
         }
 
         [Fact]

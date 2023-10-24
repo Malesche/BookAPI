@@ -1,10 +1,11 @@
-﻿using LibraryService.Persistence;
+﻿using LibraryService.Api.Works.ViewModels;
+using LibraryService.Persistence;
 
 namespace LibraryService.Api.Works
 {
     public interface IWorkService
     {
-        public void Create(string title, DateTimeOffset? earliestPubDate, string sourceIds);
+        public WorkReadViewModel Create(string title, DateTimeOffset? earliestPubDate, string sourceIds);
 
         public void Update(int id, string title, DateTimeOffset? earliestPubDate, string sourceIds);
 
@@ -24,7 +25,7 @@ namespace LibraryService.Api.Works
             _dbContext = dbContext;
         }
 
-        public void Create(string title, DateTimeOffset? earliestPubDate, string sourceIds)
+        public WorkReadViewModel Create(string title, DateTimeOffset? earliestPubDate, string sourceIds)
         {
             var work = new Work
             {
@@ -35,6 +36,16 @@ namespace LibraryService.Api.Works
 
             _dbContext.Works.Add(work);
             _dbContext.SaveChanges();
+
+            var workReadViewModel = new WorkReadViewModel
+            {
+                Id = work.Id,
+                Title = work.Title,
+                EarliestPubDate = work.EarliestPubDate,
+                SourceIds = work.SourceIds
+            };
+
+            return workReadViewModel;
         }
 
         public void Update(int id, string title, DateTimeOffset? earliestPubDate, string sourceIds)

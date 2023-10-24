@@ -6,11 +6,24 @@ namespace LibraryService.Tests.Api.Works
     public class WorkServiceTests : TestWithSqliteBase
     {
         [Fact]
+        public void Create_ReturnsWorkReadViewModel()
+        {
+            var service = new WorkService(DbContext);
+            var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
+
+            var model = service.Create("WorkTitle", dateDec1871, "s");
+
+            Assert.Equal("WorkTitle", model.Title);
+            Assert.Equal(new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7)), model.EarliestPubDate);
+            Assert.Equal("s", model.SourceIds);
+        }
+
+        [Fact]
         public void Create_SavesToDb()
         {
             var service = new WorkService(DbContext);
             var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
-            
+
             service.Create("WorkTitle", dateDec1871, "s");
 
             var work = DbContext.Works.Single();
