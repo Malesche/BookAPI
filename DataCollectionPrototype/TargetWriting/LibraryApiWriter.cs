@@ -16,29 +16,36 @@ namespace DataCollectionPrototype.TargetWriting
 
             foreach (var bookModel in data)
             {
-                var workResponse = await client.PostAsync(
-                    "/api/Works",
-                    JsonContent.Create(new WorkWriteViewModel
+                int? workId = null;
+                if (bookModel.Work is not null)
+                {
+                    var workPayload = JsonContent.Create(new WorkWriteViewModel
                     {
                         Title = bookModel.Work.Title,
                         EarliestPubDate = bookModel.Work.EarliestPubDate,
                         SourceIds = bookModel.Work.SourceIds
-                    }));
-                var work = workResponse.Content.ReadAsAsync<WorkReadViewModel>().Result;
-                int? workId = work.Id;
-                var bookAuthorList = new List<BookAuthorWriteViewModel>();
+                    });
+                    var workResponse = await client.PostAsync("/api/Works", workPayload);
+                    var work = await workResponse.Content.ReadAsAsync<WorkReadViewModel>();
+                    workId = work.Id;
+                }
 
+                var bookAuthorList = new List<BookAuthorWriteViewModel>();
                 foreach (var bookAuthor in bookModel.BookAuthors)
                 {
-                    var authorResponse = await client.PostAsync(
-                        "/api/Authors",
-                        JsonContent.Create(
-                            WriteModelFromAuthorModel(bookAuthor.Author)));
-                    var author = authorResponse.Content.ReadAsAsync<AuthorReadViewModel>().Result;
-                    bookAuthorList.Add(new BookAuthorWriteViewModel{ AuthorId = author.Id, AuthorRole = (LibraryService.Persistence.AuthorRole?)bookAuthor.AuthorRole});
-                    Console.WriteLine();
+                    var authorPayload = JsonContent.Create(WriteModelFromAuthorModel(bookAuthor.Author));
+                    var authorResponse = await client.PostAsync("/api/Authors", authorPayload);
+                    var author = await authorResponse.Content.ReadAsAsync<AuthorReadViewModel>();
+                    var viewModel = new BookAuthorWriteViewModel
+                    {
+                        AuthorId = author.Id, 
+                        AuthorRole = (LibraryService.Persistence.AuthorRole?)bookAuthor.AuthorRole
+                    };
+                    bookAuthorList.Add(viewModel);
                 }
-               var response = await client.PostAsync("/api/Books", JsonContent.Create(WriteModelFromBookModel(bookModel, workId, bookAuthorList)));
+
+                var jsonBookWriteModel = JsonContent.Create(WriteModelFromBookModel(bookModel, workId, bookAuthorList));
+                await client.PostAsync("/api/Books", jsonBookWriteModel);
             }
         }
 
@@ -55,7 +62,7 @@ namespace DataCollectionPrototype.TargetWriting
                 PubDate = bookModel.PubDate,
                 Publisher = bookModel.Publisher,
                 CoverUrl = bookModel.CoverUrl,
-                SourceIds = bookModel.SourceIds,
+                SourceIds = SourceId.Serialize(bookModel.SourceIds),
                 WorkId = workId,
                 BookAuthors = bookAuthorList
             };

@@ -20,7 +20,7 @@
 
         public string CoverUrl { get; set; }
 
-        public string SourceIds { get; set; }
+        public List<SourceId> SourceIds { get; set; } = new();
 
         public List<BookAuthor> BookAuthors { get; set; } = new();
 
