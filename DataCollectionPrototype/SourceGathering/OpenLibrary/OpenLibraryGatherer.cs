@@ -96,6 +96,7 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
 
             var bookAuthorsList = new List<BookAuthor>();
             var authorsList = new List<AuthorModel>();
+            WorkModel workModel = null;
 
             Console.WriteLine(book.title);
             //PrintBookStuff(book);
@@ -116,7 +117,13 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
             if (book.works is not null)
             {
                 var work = await GetWorkAsync(client, book.works[0].key);
-                Console.WriteLine(work.key);
+
+                workModel = new WorkModel
+                {
+                    Title = work.title,
+                    EarliestPubDate = DateTimeOffsetFromString(work.first_publish_date),
+                    SourceIds = "OpenLibrary=" + book.works[0]
+                };
             }
 
             if (book.contributions is not null)
@@ -152,6 +159,8 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
                     bookAuthorsList.Add(new BookAuthor { AuthorRole = AuthorRole.Author, Book = bookModel, Author = currentAuthor });
                 }
             }
+
+            bookModel.Work = workModel;
             bookModel.Authors = authorsList;
             bookModel.BookAuthors = bookAuthorsList;
 
@@ -164,8 +173,9 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
             if (response.IsSuccessStatusCode)
             {
                 var work = await response.Content.ReadAsAsync<OpenLibraryWork>();
-
-                var workJsonString = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("work: " + work.title);
+                Console.WriteLine(work.first_publish_date);
+                //var workJsonString = await response.Content.ReadAsStringAsync();
 
                 return work;
             }
@@ -244,30 +254,6 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary
 
             Console.WriteLine("Author Role: " + role);
             return null;
-        }
-            
-        private void PrintBookStuff(OpenLibraryBook book)
-        {
-            Console.WriteLine(book.title);
-            Console.WriteLine(book.key);
-            Console.WriteLine(BookFormatFromPhysicalFormat(book.physical_format));
-
-            if (book.contributions != null)
-            {
-                foreach (var contribution in book.contributions)
-                {
-                    Console.WriteLine(
-                        $"contributor: {contribution.Split('(', ')')[0].Trim()}, {contribution.Split('(', ')')[1]}");
-                }
-            }
-
-            if (book.authors != null)
-            {
-                foreach (var a in book.authors)
-                {
-                    Console.WriteLine(a.key);
-                }
-            }
         }
     }
 }

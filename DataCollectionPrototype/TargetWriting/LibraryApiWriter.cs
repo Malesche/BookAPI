@@ -3,6 +3,7 @@ using DataCollectionPrototype.Core.Model;
 using System.Net.Http.Json;
 using LibraryService.Api.Authors.ViewModels;
 using LibraryService.Api.Books.ViewModels;
+using LibraryService.Api.Works.ViewModels;
 
 namespace DataCollectionPrototype.TargetWriting
 {
@@ -15,7 +16,18 @@ namespace DataCollectionPrototype.TargetWriting
 
             foreach (var bookModel in data)
             {
+                var workResponse = await client.PostAsync(
+                    "/api/Works",
+                    JsonContent.Create(new WorkWriteViewModel
+                    {
+                        Title = bookModel.Work.Title,
+                        EarliestPubDate = bookModel.Work.EarliestPubDate,
+                        SourceIds = bookModel.Work.SourceIds
+                    }));
+                var work = workResponse.Content.ReadAsAsync<WorkReadViewModel>().Result;
+                int? workId = work.Id;
                 var bookAuthorList = new List<BookAuthorWriteViewModel>();
+
                 foreach (var bookAuthor in bookModel.BookAuthors)
                 {
                     var authorResponse = await client.PostAsync(
@@ -26,11 +38,11 @@ namespace DataCollectionPrototype.TargetWriting
                     bookAuthorList.Add(new BookAuthorWriteViewModel{ AuthorId = author.Id, AuthorRole = (LibraryService.Persistence.AuthorRole?)bookAuthor.AuthorRole});
                     Console.WriteLine();
                 }
-               var response = await client.PostAsync("/api/Books", JsonContent.Create(WriteModelFromBookModel(bookModel, bookAuthorList)));
+               var response = await client.PostAsync("/api/Books", JsonContent.Create(WriteModelFromBookModel(bookModel, workId, bookAuthorList)));
             }
         }
 
-        private static BookWriteViewModel WriteModelFromBookModel(BookModel bookModel, List<BookAuthorWriteViewModel> bookAuthorList)
+        private static BookWriteViewModel WriteModelFromBookModel(BookModel bookModel, int? workId, List<BookAuthorWriteViewModel> bookAuthorList)
         {
             return new BookWriteViewModel
             {
@@ -44,7 +56,7 @@ namespace DataCollectionPrototype.TargetWriting
                 Publisher = bookModel.Publisher,
                 CoverUrl = bookModel.CoverUrl,
                 SourceIds = bookModel.SourceIds,
-                WorkId = null,
+                WorkId = workId,
                 BookAuthors = bookAuthorList
             };
         }
