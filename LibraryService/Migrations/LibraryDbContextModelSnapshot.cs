@@ -47,7 +47,7 @@ namespace LibraryService.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Authors");
+                    b.ToTable("Authors", (string)null);
                 });
 
             modelBuilder.Entity("LibraryService.Persistence.Book", b =>
@@ -95,7 +95,7 @@ namespace LibraryService.Migrations
 
                     b.HasIndex("WorkId");
 
-                    b.ToTable("Books");
+                    b.ToTable("Books", (string)null);
                 });
 
             modelBuilder.Entity("LibraryService.Persistence.BookAuthor", b =>
@@ -122,7 +122,7 @@ namespace LibraryService.Migrations
                     b.HasIndex("BookId", "AuthorId", "AuthorRole")
                         .IsUnique();
 
-                    b.ToTable("BookAuthor");
+                    b.ToTable("BookAuthor", (string)null);
                 });
 
             modelBuilder.Entity("LibraryService.Persistence.BookGenre", b =>
@@ -145,7 +145,7 @@ namespace LibraryService.Migrations
 
                     b.HasIndex("GenreId");
 
-                    b.ToTable("BookGenre");
+                    b.ToTable("BookGenre", (string)null);
                 });
 
             modelBuilder.Entity("LibraryService.Persistence.Genre", b =>
@@ -161,7 +161,7 @@ namespace LibraryService.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Genres");
+                    b.ToTable("Genres", (string)null);
                 });
 
             modelBuilder.Entity("LibraryService.Persistence.Work", b =>
@@ -183,7 +183,7 @@ namespace LibraryService.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Works");
+                    b.ToTable("Works", (string)null);
                 });
 
             modelBuilder.Entity("LibraryService.Persistence.Book", b =>

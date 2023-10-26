@@ -2,6 +2,7 @@
 using DataCollectionPrototype.Core;
 using DataCollectionPrototype.SourceGathering.GoogleBooks;
 using DataCollectionPrototype.SourceGathering.OpenLibrary;
+using DataCollectionPrototype.SourceGathering.OpenLibrary.BulkReader;
 using DataCollectionPrototype.TargetWriting;
 
 namespace DataCollectionPrototype
@@ -15,8 +16,9 @@ namespace DataCollectionPrototype
                 var runner = new DataCollectionRunner(
                     new IDataSourceGatherer[]
                     {
-                        new GoogleBooksGatherer(),
-                        new OpenLibraryGatherer()
+                        new OpenLibraryBulkReader()
+                        //new GoogleBooksGatherer(),
+                        //new OpenLibraryGatherer()
                     },
                     new PassThroughConsolidator(),
                     new LibraryApiWriter(),

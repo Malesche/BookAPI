@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace DataCollectionPrototype.SourceGathering.OpenLibrary.Model
+﻿namespace DataCollectionPrototype.SourceGathering.OpenLibrary.Model
 {
     internal class OpenLibraryWork
     {
@@ -8,9 +6,9 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary.Model
         //public int[] covers { get; set; }
         //public string[] subject_places { get; set; }
         public string first_publish_date { get; set; }
-        public string[] subject_people { get; set; }
+        //public string[] subject_people { get; set; }
         public string key { get; set; }
-        public Author[] authors { get; set; }
+        //public Author[] authors { get; set; }
         //public Excerpt[] excerpts { get; set; }
         //public Type type { get; set; }
         //public string[] subjects { get; set; }
@@ -49,21 +47,21 @@ namespace DataCollectionPrototype.SourceGathering.OpenLibrary.Model
         //    public string key { get; set; }
         //}
 
-        public class Author
-        {
-            public Author1 author { get; set; }
-            public Type2 type { get; set; }
-        }
+        //public class Author
+        //{
+        //    public Author1 author { get; set; }
+        //    public Type2 type { get; set; }
+        //}
 
-        public class Author1
-        {
-            public string key { get; set; }
-        }
+        //public class Author1
+        //{
+        //    public string key { get; set; }
+        //}
 
-        public class Type2
-        {
-            public string key { get; set; }
-        }
+        //public class Type2
+        //{
+        //    public string key { get; set; }
+        //}
 
         //public class Excerpt
         //{
