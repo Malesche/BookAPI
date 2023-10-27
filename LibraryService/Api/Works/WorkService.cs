@@ -1,82 +1,81 @@
 ﻿using LibraryService.Api.Works.ViewModels;
 using LibraryService.Persistence;
 
-namespace LibraryService.Api.Works
+namespace LibraryService.Api.Works;
+
+public interface IWorkService
 {
-    public interface IWorkService
+    public WorkReadViewModel Create(string title, DateTimeOffset? earliestPubDate, string sourceIds);
+
+    public void Update(int id, string title, DateTimeOffset? earliestPubDate, string sourceIds);
+
+    public IEnumerable<Work> GetAll();
+
+    public Work Get(int id);
+
+    public bool Exists(int id);
+}
+
+public class WorkService : IWorkService
+{
+    private readonly LibraryDbContext _dbContext;
+
+    public WorkService(LibraryDbContext dbContext)
     {
-        public WorkReadViewModel Create(string title, DateTimeOffset? earliestPubDate, string sourceIds);
-
-        public void Update(int id, string title, DateTimeOffset? earliestPubDate, string sourceIds);
-
-        public IEnumerable<Work> GetAll();
-
-        public Work Get(int id);
-
-        public bool Exists(int id);
+        _dbContext = dbContext;
     }
 
-    public class WorkService : IWorkService
+    public WorkReadViewModel Create(string title, DateTimeOffset? earliestPubDate, string sourceIds)
     {
-        private readonly LibraryDbContext _dbContext;
-
-        public WorkService(LibraryDbContext dbContext)
+        var work = new Work
         {
-            _dbContext = dbContext;
-        }
+            Title = title,
+            EarliestPubDate = earliestPubDate,
+            SourceIds = sourceIds
+        };
 
-        public WorkReadViewModel Create(string title, DateTimeOffset? earliestPubDate, string sourceIds)
+        _dbContext.Works.Add(work);
+        _dbContext.SaveChanges();
+
+        var workReadViewModel = new WorkReadViewModel
         {
-            var work = new Work
-            {
-                Title = title,
-                EarliestPubDate = earliestPubDate,
-                SourceIds = sourceIds
-            };
+            Id = work.Id,
+            Title = work.Title,
+            EarliestPubDate = work.EarliestPubDate,
+            SourceIds = work.SourceIds
+        };
 
-            _dbContext.Works.Add(work);
-            _dbContext.SaveChanges();
+        return workReadViewModel;
+    }
 
-            var workReadViewModel = new WorkReadViewModel
-            {
-                Id = work.Id,
-                Title = work.Title,
-                EarliestPubDate = work.EarliestPubDate,
-                SourceIds = work.SourceIds
-            };
+    public void Update(int id, string title, DateTimeOffset? earliestPubDate, string sourceIds)
+    {
+        var work = _dbContext.Works.First(a => a.Id == id);
+        work.Title = title;
+        work.EarliestPubDate = earliestPubDate;
+        work.SourceIds = sourceIds;
 
-            return workReadViewModel;
-        }
+        _dbContext.SaveChanges();
+    }
 
-        public void Update(int id, string title, DateTimeOffset? earliestPubDate, string sourceIds)
-        {
-            var work = _dbContext.Works.First(a => a.Id == id);
-            work.Title = title;
-            work.EarliestPubDate = earliestPubDate;
-            work.SourceIds = sourceIds;
+    public IEnumerable<Work> GetAll()
+    {
+        return _dbContext
+            .Works
+            .ToArray();
+    }
 
-            _dbContext.SaveChanges();
-        }
+    public Work Get(int id)
+    {
+        return _dbContext
+            .Works
+            .FirstOrDefault(a => a.Id == id);
+    }
 
-        public IEnumerable<Work> GetAll()
-        {
-            return _dbContext
-                .Works
-                .ToArray();
-        }
-
-        public Work Get(int id)
-        {
-            return _dbContext
-                .Works
-                .FirstOrDefault(a => a.Id == id);
-        }
-
-        public bool Exists(int id)
-        {
-            return _dbContext
-                .Works
-                .Any(a => a.Id == id);
-        }
+    public bool Exists(int id)
+    {
+        return _dbContext
+            .Works
+            .Any(a => a.Id == id);
     }
 }

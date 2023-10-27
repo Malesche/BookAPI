@@ -1,13 +1,12 @@
-﻿namespace DataCollectionPrototype.Core.Model
+﻿namespace DataCollectionPrototype.Core.Model;
+
+public class WorkModel
 {
-    public class WorkModel
-    {
-        public string Title { get; set; }
+    public string Title { get; set; }
 
-        public DateTimeOffset? EarliestPubDate { get; set; }
+    public DateTimeOffset? EarliestPubDate { get; set; }
 
-        public string SourceIds { get; set; }
+    public string SourceIds { get; set; }
         
-        public List<BookModel> Books { get; set; } = new();
-    }
+    public List<BookModel> Books { get; set; } = new();
 }

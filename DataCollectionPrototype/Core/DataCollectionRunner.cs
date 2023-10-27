@@ -1,40 +1,39 @@
 ﻿using DataCollectionPrototype.Core.Model;
 
-namespace DataCollectionPrototype.Core
+namespace DataCollectionPrototype.Core;
+
+internal sealed class DataCollectionRunner
 {
-    internal sealed class DataCollectionRunner
+    private readonly RunnerConfiguration _configuration;
+
+    private readonly IDataSourceGatherer[] _gatherers;
+    private readonly IDataConsolidator _consolidator;
+    private readonly ITargetWriter _targetWriter;
+
+    public DataCollectionRunner(
+        IEnumerable<IDataSourceGatherer> gatherers,
+        IDataConsolidator consolidator,
+        ITargetWriter targetWriter,
+        RunnerConfiguration configuration)
     {
-        private readonly RunnerConfiguration _configuration;
+        _gatherers = gatherers.ToArray();
+        _consolidator = consolidator;
+        _targetWriter = targetWriter;
+        _configuration = configuration;
+    }
 
-        private readonly IDataSourceGatherer[] _gatherers;
-        private readonly IDataConsolidator _consolidator;
-        private readonly ITargetWriter _targetWriter;
+    public async Task RunAsync()
+    {
+        var booksFromAllSources = new List<BookModel>();
 
-        public DataCollectionRunner(
-            IEnumerable<IDataSourceGatherer> gatherers,
-            IDataConsolidator consolidator,
-            ITargetWriter targetWriter,
-            RunnerConfiguration configuration)
+        foreach (var gatherer in _gatherers)
         {
-            _gatherers = gatherers.ToArray();
-            _consolidator = consolidator;
-            _targetWriter = targetWriter;
-            _configuration = configuration;
+            var books = await gatherer.CollectAsync();
+            booksFromAllSources.AddRange(books);
         }
 
-        public async Task RunAsync()
-        {
-            var booksFromAllSources = new List<BookModel>();
+        var consolidatedBooks = await _consolidator.ConsolidateAsync(booksFromAllSources);
 
-            foreach (var gatherer in _gatherers)
-            {
-                var books = await gatherer.CollectAsync();
-                booksFromAllSources.AddRange(books);
-            }
-
-            var consolidatedBooks = await _consolidator.ConsolidateAsync(booksFromAllSources);
-
-            await _targetWriter.WriteAsync(consolidatedBooks);
-        }
+        await _targetWriter.WriteAsync(consolidatedBooks);
     }
 }

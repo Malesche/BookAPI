@@ -1,9 +1,8 @@
-﻿namespace DataCollectionPrototype.Core.Model
-{
-    public class GenreModel
-    {
-        public string Name { get; set; }
+﻿namespace DataCollectionPrototype.Core.Model;
 
-        public List<BookGenreModel> BookGenres { get; set; } = new();
-    }
+public class GenreModel
+{
+    public string Name { get; set; }
+
+    public List<BookGenreModel> BookGenres { get; set; } = new();
 }

@@ -5,178 +5,177 @@ using LibraryService.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 
-namespace LibraryService.Tests.Api.Works
+namespace LibraryService.Tests.Api.Works;
+
+public class WorksControllerTests
 {
-    public class WorksControllerTests
+    [Fact]
+    public void CreateWork_ReturnsValidViewModel()
     {
-        [Fact]
-        public void CreateWork_ReturnsValidViewModel()
+        var workService = Substitute.For<IWorkService>();
+        var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
+        workService.Create(Arg.Is<string>("Title1"), dateDec1871, Arg.Is<string>("sourceIds"))
+            .Returns(new WorkReadViewModel { Id = 1, Title = "Title1", EarliestPubDate = dateDec1871, SourceIds = "sourceIds" });
+        var controller = new WorksController(workService);
+
+        var result = controller.CreateWork(new WorkWriteViewModel { Title = "Title1", EarliestPubDate = dateDec1871, SourceIds = "sourceIds" });
+
+        Assert.IsType<OkObjectResult>(result);
+        var okObjectResult = (OkObjectResult)result;
+        var model = (WorkReadViewModel)okObjectResult.Value;
+        Assert.IsAssignableFrom<WorkReadViewModel>(model);
+        Assert.Equal(1, model.Id);
+        Assert.Equal("Title1", model.Title);
+        Assert.Equal(dateDec1871, model.EarliestPubDate);
+        Assert.Equal("sourceIds", model.SourceIds);
+    }
+
+    [Fact]
+    public void CreateWork_CallsService()
+    {
+        var workService = Substitute.For<IWorkService>();
+        var controller = new WorksController(workService);
+        var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
+
+        controller.CreateWork(new WorkWriteViewModel { Title = "WorkTitle", EarliestPubDate = dateDec1871, SourceIds = "s" });
+
+        workService.Received(1).Create("WorkTitle", dateDec1871, "s");
+    }
+
+    [Fact]
+    public void GetAllWorks_ReturnsValidViewModels()
+    {
+        var workService = Substitute.For<IWorkService>();
+        var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
+        var dateDec1872 = new DateTimeOffset(1872, 12, 14, 7, 0, 0, TimeSpan.FromHours(-7));
+        var dateDec1873 = new DateTimeOffset(1873, 12, 15, 7, 0, 0, TimeSpan.FromHours(-7));
+        workService.GetAll().Returns(new List<Work>
         {
-            var workService = Substitute.For<IWorkService>();
-            var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
-            workService.Create(Arg.Is<string>("Title1"), dateDec1871, Arg.Is<string>("sourceIds"))
-                .Returns(new WorkReadViewModel { Id = 1, Title = "Title1", EarliestPubDate = dateDec1871, SourceIds = "sourceIds" });
-            var controller = new WorksController(workService);
+            new() { Id = 1, Title = "Title1", EarliestPubDate = dateDec1871},
+            new() { Id = 2, Title = "Title2", EarliestPubDate = dateDec1872 },
+            new() { Id = 3, Title = "Title3", EarliestPubDate = dateDec1873 }
+        });
+        var controller = new WorksController(workService);
 
-            var result = controller.CreateWork(new WorkWriteViewModel { Title = "Title1", EarliestPubDate = dateDec1871, SourceIds = "sourceIds" });
+        var result = controller.GetAllWorks();
 
-            Assert.IsType<OkObjectResult>(result);
-            var okObjectResult = (OkObjectResult)result;
-            var model = (WorkReadViewModel)okObjectResult.Value;
-            Assert.IsAssignableFrom<WorkReadViewModel>(model);
-            Assert.Equal(1, model.Id);
-            Assert.Equal("Title1", model.Title);
-            Assert.Equal(dateDec1871, model.EarliestPubDate);
-            Assert.Equal("sourceIds", model.SourceIds);
-        }
+        Assert.IsType<OkObjectResult>(result);
+        var okObjectResult = (OkObjectResult)result;
+        var model = okObjectResult.Value;
+        Assert.IsAssignableFrom<IList<WorkReadViewModel>>(model);
+        var viewModelList = (IList<WorkReadViewModel>)model;
+        Assert.Equal(3, viewModelList.Count);
+        Assert.Equal(1, viewModelList[0].Id);
+        Assert.Equal("Title1", viewModelList[0].Title);
+        Assert.Equal(dateDec1871, viewModelList[0].EarliestPubDate);
+        Assert.Equal(2, viewModelList[1].Id);
+        Assert.Equal("Title2", viewModelList[1].Title);
+        Assert.Equal(dateDec1872, viewModelList[1].EarliestPubDate);
+        Assert.Equal(3, viewModelList[2].Id);
+        Assert.Equal("Title3", viewModelList[2].Title);
+        Assert.Equal(dateDec1873, viewModelList[2].EarliestPubDate);
+    }
 
-        [Fact]
-        public void CreateWork_CallsService()
-        {
-            var workService = Substitute.For<IWorkService>();
-            var controller = new WorksController(workService);
-            var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
+    [Fact]
+    public void GetAllWorks_CallsService()
+    {
+        var workService = Substitute.For<IWorkService>();
+        var controller = new WorksController(workService);
 
-            controller.CreateWork(new WorkWriteViewModel { Title = "WorkTitle", EarliestPubDate = dateDec1871, SourceIds = "s" });
+        controller.GetAllWorks();
 
-            workService.Received(1).Create("WorkTitle", dateDec1871, "s");
-        }
+        workService.Received(1).GetAll();
+    }
 
-        [Fact]
-        public void GetAllWorks_ReturnsValidViewModels()
-        {
-            var workService = Substitute.For<IWorkService>();
-            var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
-            var dateDec1872 = new DateTimeOffset(1872, 12, 14, 7, 0, 0, TimeSpan.FromHours(-7));
-            var dateDec1873 = new DateTimeOffset(1873, 12, 15, 7, 0, 0, TimeSpan.FromHours(-7));
-            workService.GetAll().Returns(new List<Work>
-            {
-                new() { Id = 1, Title = "Title1", EarliestPubDate = dateDec1871},
-                new() { Id = 2, Title = "Title2", EarliestPubDate = dateDec1872 },
-                new() { Id = 3, Title = "Title3", EarliestPubDate = dateDec1873 }
-            });
-            var controller = new WorksController(workService);
+    [Fact]
+    public void GetWorkById_validId_ReturnsValidViewModel()
+    {
+        var workService = Substitute.For<IWorkService>();
+        var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
+        workService.Get(5).Returns(new Work { Id = 5, Title = "Title", EarliestPubDate = dateDec1871});
+        var controller = new WorksController(workService);
 
-            var result = controller.GetAllWorks();
+        var result = controller.GetWorkById(5);
 
-            Assert.IsType<OkObjectResult>(result);
-            var okObjectResult = (OkObjectResult)result;
-            var model = okObjectResult.Value;
-            Assert.IsAssignableFrom<IList<WorkReadViewModel>>(model);
-            var viewModelList = (IList<WorkReadViewModel>)model;
-            Assert.Equal(3, viewModelList.Count);
-            Assert.Equal(1, viewModelList[0].Id);
-            Assert.Equal("Title1", viewModelList[0].Title);
-            Assert.Equal(dateDec1871, viewModelList[0].EarliestPubDate);
-            Assert.Equal(2, viewModelList[1].Id);
-            Assert.Equal("Title2", viewModelList[1].Title);
-            Assert.Equal(dateDec1872, viewModelList[1].EarliestPubDate);
-            Assert.Equal(3, viewModelList[2].Id);
-            Assert.Equal("Title3", viewModelList[2].Title);
-            Assert.Equal(dateDec1873, viewModelList[2].EarliestPubDate);
-        }
+        Assert.IsType<OkObjectResult>(result);
+        var okObjectResult = (OkObjectResult)result;
+        var model = (WorkReadViewModel)okObjectResult.Value;
+        Assert.IsAssignableFrom<WorkReadViewModel>(model);
+        Assert.Equal(5, model.Id);
+        Assert.Equal("Title", model.Title);
+        Assert.Equal(dateDec1871, model.EarliestPubDate);
+    }
 
-        [Fact]
-        public void GetAllWorks_CallsService()
-        {
-            var workService = Substitute.For<IWorkService>();
-            var controller = new WorksController(workService);
+    [Fact]
+    public void GetWorkById_validId_CallsService()
+    {
+        var workService = Substitute.For<IWorkService>();
+        workService.Get(5).Returns(new Work { Id = 5, Title = "Title", EarliestPubDate = null });
+        var controller = new WorksController(workService);
 
-            controller.GetAllWorks();
+        controller.GetWorkById(5);
 
-            workService.Received(1).GetAll();
-        }
+        workService.Received(1).Get(5);
+    }
 
-        [Fact]
-        public void GetWorkById_validId_ReturnsValidViewModel()
-        {
-            var workService = Substitute.For<IWorkService>();
-            var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
-            workService.Get(5).Returns(new Work { Id = 5, Title = "Title", EarliestPubDate = dateDec1871});
-            var controller = new WorksController(workService);
+    [Fact]
+    public void GetWorkById_invalidId_ReturnsNotFound()
+    {
+        var workService = Substitute.For<IWorkService>();
+        workService.Get(5).Returns(_ => null);
+        var controller = new WorksController(workService);
 
-            var result = controller.GetWorkById(5);
+        var result = controller.GetWorkById(5);
 
-            Assert.IsType<OkObjectResult>(result);
-            var okObjectResult = (OkObjectResult)result;
-            var model = (WorkReadViewModel)okObjectResult.Value;
-            Assert.IsAssignableFrom<WorkReadViewModel>(model);
-            Assert.Equal(5, model.Id);
-            Assert.Equal("Title", model.Title);
-            Assert.Equal(dateDec1871, model.EarliestPubDate);
-        }
+        Assert.IsType<NotFoundResult>(result);
+    }
 
-        [Fact]
-        public void GetWorkById_validId_CallsService()
-        {
-            var workService = Substitute.For<IWorkService>();
-            workService.Get(5).Returns(new Work { Id = 5, Title = "Title", EarliestPubDate = null });
-            var controller = new WorksController(workService);
+    [Fact]
+    public void UpdateWork_validId_CallsService()
+    {
+        var workService = Substitute.For<IWorkService>();
+        workService.Exists(5).Returns(true);
+        var controller = new WorksController(workService);
+        var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
 
-            controller.GetWorkById(5);
+        controller.UpdateWork(5, new WorkWriteViewModel { Title = "NewTitle", EarliestPubDate = dateDec1871, SourceIds = "s"});
 
-            workService.Received(1).Get(5);
-        }
+        workService.Received(1).Update(5, "NewTitle", dateDec1871, "s");
+    }
 
-        [Fact]
-        public void GetWorkById_invalidId_ReturnsNotFound()
-        {
-            var workService = Substitute.For<IWorkService>();
-            workService.Get(5).Returns(_ => null);
-            var controller = new WorksController(workService);
+    [Fact]
+    public void UpdateWork_validId_ReturnsNoContent()
+    {
+        var workService = Substitute.For<IWorkService>();
+        workService.Exists(5).Returns(true);
+        var controller = new WorksController(workService);
 
-            var result = controller.GetWorkById(5);
+        var result = controller.UpdateWork(5, new WorkWriteViewModel { Title = "NewTitle", EarliestPubDate = null });
 
-            Assert.IsType<NotFoundResult>(result);
-        }
+        Assert.IsType<NoContentResult>(result);
+    }
 
-        [Fact]
-        public void UpdateWork_validId_CallsService()
-        {
-            var workService = Substitute.For<IWorkService>();
-            workService.Exists(5).Returns(true);
-            var controller = new WorksController(workService);
-            var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
+    [Fact]
+    public void UpdateWork_invalidId_DoesNotCallServiceUpdate()
+    {
+        var workService = Substitute.For<IWorkService>();
+        workService.Exists(5).Returns(false);
+        var controller = new WorksController(workService);
 
-            controller.UpdateWork(5, new WorkWriteViewModel { Title = "NewTitle", EarliestPubDate = dateDec1871, SourceIds = "s"});
+        controller.UpdateWork(5, new WorkWriteViewModel { Title = "NewTitle", EarliestPubDate = null });
 
-            workService.Received(1).Update(5, "NewTitle", dateDec1871, "s");
-        }
+        workService.DidNotReceive().Update(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<string>());
+    }
 
-        [Fact]
-        public void UpdateWork_validId_ReturnsNoContent()
-        {
-            var workService = Substitute.For<IWorkService>();
-            workService.Exists(5).Returns(true);
-            var controller = new WorksController(workService);
+    [Fact]
+    public void UpdateWork_invalidId_ReturnsNotFound()
+    {
+        var workService = Substitute.For<IWorkService>();
+        workService.Exists(5).Returns(false);
+        var controller = new WorksController(workService);
 
-            var result = controller.UpdateWork(5, new WorkWriteViewModel { Title = "NewTitle", EarliestPubDate = null });
+        var result = controller.UpdateWork(5, new WorkWriteViewModel { Title = "NewTitle", EarliestPubDate = null });
 
-            Assert.IsType<NoContentResult>(result);
-        }
-
-        [Fact]
-        public void UpdateWork_invalidId_DoesNotCallServiceUpdate()
-        {
-            var workService = Substitute.For<IWorkService>();
-            workService.Exists(5).Returns(false);
-            var controller = new WorksController(workService);
-
-            controller.UpdateWork(5, new WorkWriteViewModel { Title = "NewTitle", EarliestPubDate = null });
-
-            workService.DidNotReceive().Update(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<string>());
-        }
-
-        [Fact]
-        public void UpdateWork_invalidId_ReturnsNotFound()
-        {
-            var workService = Substitute.For<IWorkService>();
-            workService.Exists(5).Returns(false);
-            var controller = new WorksController(workService);
-
-            var result = controller.UpdateWork(5, new WorkWriteViewModel { Title = "NewTitle", EarliestPubDate = null });
-
-            Assert.IsType<NotFoundObjectResult>(result);
-        }
+        Assert.IsType<NotFoundObjectResult>(result);
     }
 }

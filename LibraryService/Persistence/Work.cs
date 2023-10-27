@@ -1,18 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LibraryService.Persistence
+namespace LibraryService.Persistence;
+
+public class Work
 {
-    public class Work
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
         
-        public string Title { get; set; }
+    public string Title { get; set; }
 
-        public DateTimeOffset? EarliestPubDate { get; set; }
+    public DateTimeOffset? EarliestPubDate { get; set; }
 
-        [Column(TypeName = "NVARCHAR(100)")]
-        public string SourceIds { get; set; }
+    [Column(TypeName = "NVARCHAR(100)")]
+    public string SourceIds { get; set; }
 
-        public ICollection<Book> Books { get; set; }
-    }
+    public ICollection<Book> Books { get; set; }
 }

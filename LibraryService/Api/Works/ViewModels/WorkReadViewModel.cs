@@ -1,13 +1,12 @@
-﻿namespace LibraryService.Api.Works.ViewModels
+﻿namespace LibraryService.Api.Works.ViewModels;
+
+public class WorkReadViewModel
 {
-    public class WorkReadViewModel
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public string Title { get; set; }
+    public string Title { get; set; }
 
-        public DateTimeOffset? EarliestPubDate { get; set; }
+    public DateTimeOffset? EarliestPubDate { get; set; }
 
-        public string SourceIds { get; set; }
-    }
+    public string SourceIds { get; set; }
 }

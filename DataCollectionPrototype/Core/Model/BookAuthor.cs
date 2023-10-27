@@ -1,11 +1,10 @@
-﻿namespace DataCollectionPrototype.Core.Model
+﻿namespace DataCollectionPrototype.Core.Model;
+
+public class BookAuthor
 {
-    public class BookAuthor
-    {
-        public AuthorRole? AuthorRole { get; set; }
+    public AuthorRole? AuthorRole { get; set; }
 
-        public BookModel Book { get; set; } = null!;
+    public BookModel Book { get; set; } = null!;
 
-        public AuthorModel Author { get; set; } = null!;
-    }
+    public AuthorModel Author { get; set; } = null!;
 }

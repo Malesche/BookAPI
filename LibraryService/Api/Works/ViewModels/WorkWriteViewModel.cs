@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LibraryService.Api.Works.ViewModels
+namespace LibraryService.Api.Works.ViewModels;
+
+public class WorkWriteViewModel
 {
-    public class WorkWriteViewModel
-    {
-        [Required]
-        public string Title { get; set; }
+    [Required]
+    public string Title { get; set; }
 
-        public DateTimeOffset? EarliestPubDate { get; set; }
+    public DateTimeOffset? EarliestPubDate { get; set; }
 
-        public string SourceIds { get; set; }
-    }
+    public string SourceIds { get; set; }
 }
