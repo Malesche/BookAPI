@@ -17,8 +17,8 @@ public static class Program
                 new IDataSourceGatherer[]
                 {
                     new OpenLibraryBulkReader()
-                    //new GoogleBooksGatherer(),
                     //new OpenLibraryGatherer()
+                    //new GoogleBooksGatherer(),
                 },
                 new PassThroughConsolidator(),
                 new LibraryApiWriter(),

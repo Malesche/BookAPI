@@ -99,7 +99,6 @@ internal class GoogleBooksGatherer : IDataSourceGatherer
         foreach (var author in book.volumeInfo.authors)
             Console.WriteLine(author);
             
-
         var bookModel = new BookModel
         {
             Title = book.volumeInfo.title,

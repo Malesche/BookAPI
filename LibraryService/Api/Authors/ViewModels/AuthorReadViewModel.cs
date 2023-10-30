@@ -1,5 +1,4 @@
-﻿
-namespace LibraryService.Api.Authors.ViewModels;
+﻿namespace LibraryService.Api.Authors.ViewModels;
 
 public class AuthorReadViewModel
 {

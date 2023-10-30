@@ -17,7 +17,7 @@ internal static class OpenLibraryHelper
             Isbn = book.isbn_10?[0],
             PubDate = DateTimeOffsetFromString(book.publish_date),
             Publisher = book.publishers?[0],
-            CoverUrl = book.covers is not null ? $"https://covers.openlibrary.org/b/id/{book.covers[0].ToString()}-M.jpg" : null,
+            CoverUrl = book.covers is null ? null : $"https://covers.openlibrary.org/b/id/{book.covers[0]}-M.jpg",
             SourceIds = { SourceId.Create("OpenLibrary", book.key) }
         };
     }
@@ -27,7 +27,7 @@ internal static class OpenLibraryHelper
         return new WorkModel
         {
             Title = work.title,
-            EarliestPubDate = OpenLibraryHelper.DateTimeOffsetFromString(work.first_publish_date),
+            EarliestPubDate = DateTimeOffsetFromString(work.first_publish_date),
             SourceIds = $"OpenLibrary={work.key}"
         };
     }
@@ -40,8 +40,8 @@ internal static class OpenLibraryHelper
         {
             Name = (string)authorJObject["name"],
             Biography = BiographyStringFromObjectOrString(authorJObject["bio"]),
-            BirthDate = authorJObject["birth_date"] is not null ? OpenLibraryHelper.DateTimeOffsetFromString((string)authorJObject["birth_date"]) : null,
-            DeathDate = authorJObject["death_date"] is not null ? OpenLibraryHelper.DateTimeOffsetFromString((string)authorJObject["death_date"]) : null,
+            BirthDate = authorJObject["birth_date"] is not null ? DateTimeOffsetFromString((string)authorJObject["birth_date"]) : null,
+            DeathDate = authorJObject["death_date"] is not null ? DateTimeOffsetFromString((string)authorJObject["death_date"]) : null,
             SourceIds = $"OpenLibrary={(string)authorJObject["key"]}"
         };
     }
