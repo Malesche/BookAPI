@@ -12,7 +12,7 @@ internal class OpenLibraryBulkReader: IDataSourceGatherer
     private const string EditionsPath = $"{RootPath}ol_dump_editions_2023-09-30.txt";
     private const string WorksPath = $"{RootPath}ol_dump_works_2023-09-30.txt";
     private const string AuthorsPath = $"{RootPath}ol_dump_authors_2023-09-30.txt";
-    private const int EditionsToImport = 100;
+    private const int EditionsToImport = 5000000;
     private const char ItemSeparator = '\t';
     private const string SourceTypeIdentifier = "OpenLibraryContribution";
 
@@ -36,10 +36,7 @@ internal class OpenLibraryBulkReader: IDataSourceGatherer
                 .Where(token => !string.IsNullOrWhiteSpace(token))
                 .ToArray();
 
-            Console.WriteLine($"--------------------------------------");
-            Console.WriteLine($"Reading Edition {values[1]} from file");
             var book = JsonConvert.DeserializeObject<OpenLibraryBook>(values[4]);
-            Console.WriteLine($"{book.title}");
             if (string.IsNullOrWhiteSpace(book.title))
                 continue;
             var bookModel = OpenLibraryHelper.BookModelFromOpenLibraryBook(book);
@@ -69,14 +66,14 @@ internal class OpenLibraryBulkReader: IDataSourceGatherer
             {
                 foreach (var a in book.authors)
                 {
-                    Console.WriteLine($"adding author to list:      {a.key}");
+                    //Console.WriteLine($"adding author to list:      {a.key}");
                     AddToListDictionary(authorsToFindForEditions, a.key, book.key);
                 }
             }
 
             if (book.works is not null)
             {
-                Console.WriteLine($"adding work to list:        {book.works[0].key}");
+                //Console.WriteLine($"adding work to list:        {book.works[0].key}");
                 AddToListDictionary(worksToFindForEditions, book.works[0].key, book.key);
             }
         }
@@ -112,11 +109,14 @@ internal class OpenLibraryBulkReader: IDataSourceGatherer
                 continue;
             }
 
-            Console.WriteLine(currentLine);
+            //Console.WriteLine($"still looking for {worksToFindForEditions.Count}    works");
             var workKey = values[1];
             var openLibraryWork = JsonConvert.DeserializeObject<OpenLibraryWork>(values[4]);
             if (string.IsNullOrWhiteSpace(openLibraryWork.title))
+            {
+                currentLine = worksReader.ReadNextLine();
                 continue;
+            }
             var workModel = OpenLibraryHelper.WorkModelFromOpenLibraryWork(openLibraryWork);
 
             foreach (var edition in worksToFindForEditions[workKey])
@@ -128,8 +128,9 @@ internal class OpenLibraryBulkReader: IDataSourceGatherer
 
             currentLine = worksReader.ReadNextLine();
         }
+        Console.WriteLine("done searching for works.");
     }
-    
+
     private void AddAuthorsToEditions(
         Dictionary<string, List<string>> authorsToFindForEditions, 
         Dictionary<string, BookModel> editionsToSave, 
@@ -147,11 +148,14 @@ internal class OpenLibraryBulkReader: IDataSourceGatherer
                 continue;
             }
 
-            Console.WriteLine(currentLine);
+            //Console.WriteLine($"still looking for {authorsToFindForEditions.Count}  authors");
             var authorKey = values[1];
             var authorModel = OpenLibraryHelper.AuthorModelFromJsonString(values[4]);
             if (string.IsNullOrWhiteSpace(authorModel.Name))
+            {
+                currentLine = authorsReader.ReadNextLine();
                 continue;
+            }
 
             foreach (var edition in authorsToFindForEditions[authorKey])
             {
@@ -167,6 +171,7 @@ internal class OpenLibraryBulkReader: IDataSourceGatherer
 
             authorsToFindForEditions.Remove(authorKey);
         }
+        Console.WriteLine("done searching for authors");
     }
 
     private static void AddToListDictionary(

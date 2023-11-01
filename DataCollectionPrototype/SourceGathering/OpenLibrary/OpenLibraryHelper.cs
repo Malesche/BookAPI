@@ -12,12 +12,12 @@ internal static class OpenLibraryHelper
         {
             Title = book.title,
             Format = BookFormatFromPhysicalFormat(book.physical_format),
-            Language = book.languages?[0].key,
-            Isbn13 = book.isbn_13?[0],
-            Isbn = book.isbn_10?[0],
+            Language = book.languages?.FirstOrDefault()?.key,
+            Isbn13 = book.isbn_13?.FirstOrDefault(),
+            Isbn = book.isbn_10?.FirstOrDefault(),
             PubDate = DateTimeOffsetFromString(book.publish_date),
-            Publisher = book.publishers?[0],
-            CoverUrl = book.covers is null ? null : $"https://covers.openlibrary.org/b/id/{book.covers[0]}-M.jpg",
+            Publisher = book.publishers?.FirstOrDefault(),
+            CoverUrl = book.covers is null ? null : $"https://covers.openlibrary.org/b/id/{book.covers.FirstOrDefault()}-M.jpg",
             SourceIds = { SourceId.Create("OpenLibrary", book.key) }
         };
     }
@@ -68,7 +68,7 @@ internal static class OpenLibraryHelper
 
     internal static BookFormat BookFormatFromPhysicalFormat(string physicalFormat)
     {
-        Console.WriteLine($"physical_format: {physicalFormat}");
+        //Console.WriteLine($"physical_format: {physicalFormat}");
         return physicalFormat switch
         {
             "Hardcover" => BookFormat.Hardcover,
