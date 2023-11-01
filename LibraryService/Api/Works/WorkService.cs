@@ -1,13 +1,18 @@
-﻿using LibraryService.Api.Works.ViewModels;
+﻿using LibraryService.Api.Authors.Models;
+using LibraryService.Api.Authors.ViewModels;
+using LibraryService.Api.Works.Models;
+using LibraryService.Api.Works.ViewModels;
 using LibraryService.Persistence;
 
 namespace LibraryService.Api.Works;
 
 public interface IWorkService
 {
-    public WorkReadViewModel Create(string title, DateTimeOffset? earliestPubDate, string sourceIds);
+    public WorkReadViewModel Create(WorkWriteModel model);
 
-    public void Update(int id, string title, DateTimeOffset? earliestPubDate, string sourceIds);
+    public IEnumerable<WorkReadViewModel> CreateSeveral(IEnumerable<WorkWriteModel> models);
+
+    public void Update(int id, WorkWriteModel model);
 
     public IEnumerable<Work> GetAll();
 
@@ -25,13 +30,13 @@ public class WorkService : IWorkService
         _dbContext = dbContext;
     }
 
-    public WorkReadViewModel Create(string title, DateTimeOffset? earliestPubDate, string sourceIds)
+    public WorkReadViewModel Create(WorkWriteModel model)
     {
         var work = new Work
         {
-            Title = title,
-            EarliestPubDate = earliestPubDate,
-            SourceIds = sourceIds
+            Title = model.Title,
+            EarliestPubDate = model.EarliestPubDate,
+            SourceIds = model.SourceIds
         };
 
         _dbContext.Works.Add(work);
@@ -48,12 +53,45 @@ public class WorkService : IWorkService
         return workReadViewModel;
     }
 
-    public void Update(int id, string title, DateTimeOffset? earliestPubDate, string sourceIds)
+    public IEnumerable<WorkReadViewModel> CreateSeveral(IEnumerable<WorkWriteModel> models)
+    {
+        var workReadViewModels = new List<WorkReadViewModel>();
+        var works = new List<Work>();
+        foreach (WorkWriteModel model in models)
+        {
+            var work = new Work
+            {
+                Title = model.Title,
+                EarliestPubDate = model.EarliestPubDate,
+                SourceIds = model.SourceIds
+            };
+            works.Add(work);
+            _dbContext.Works.Add(work);
+        }
+
+        _dbContext.SaveChanges();
+
+        foreach (Work work in works)
+        {
+            var workReadViewModel = new WorkReadViewModel
+            {
+                Id = work.Id,
+                Title = work.Title,
+                EarliestPubDate = work.EarliestPubDate,
+                SourceIds = work.SourceIds
+            };
+            workReadViewModels.Add(workReadViewModel);
+        }
+
+        return workReadViewModels;
+    }
+
+    public void Update(int id, WorkWriteModel model)
     {
         var work = _dbContext.Works.First(a => a.Id == id);
-        work.Title = title;
-        work.EarliestPubDate = earliestPubDate;
-        work.SourceIds = sourceIds;
+        work.Title = model.Title;
+        work.EarliestPubDate = model.EarliestPubDate;
+        work.SourceIds = model.SourceIds;
 
         _dbContext.SaveChanges();
     }

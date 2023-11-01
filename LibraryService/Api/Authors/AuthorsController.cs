@@ -24,6 +24,15 @@ public class AuthorsController : ControllerBase
         return Ok(authorReadViewModel);
     }
 
+    [HttpPost]
+    [Route("CreateSeveral")]
+    public IActionResult CreateSeveralAuthors([FromBody] IEnumerable<AuthorWriteViewModel> viewModels)
+    {
+        var authorReadViewModels = _authorService
+            .CreateSeveral(viewModels.Select(WriteModelFromWriteViewModel));
+        return Ok(authorReadViewModels);
+    }
+
     [HttpGet]
     public IActionResult GetAllAuthors()
     {

@@ -1,4 +1,5 @@
-﻿using LibraryService.Api.Works.ViewModels;
+﻿using LibraryService.Api.Works.Models;
+using LibraryService.Api.Works.ViewModels;
 using LibraryService.Persistence;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,8 +20,17 @@ public class WorksController : ControllerBase
     public IActionResult CreateWork([FromBody]WorkWriteViewModel viewModel)
     {
         var workReadViewModel = _workService
-            .Create(viewModel.Title, viewModel.EarliestPubDate, viewModel.SourceIds);
+            .Create(WriteModelFromWriteViewModel(viewModel));
         return Ok(workReadViewModel);
+    }
+
+    [HttpPost]
+    [Route("CreateSeveral")]
+    public IActionResult CreateSeveralWorks([FromBody] List<WorkWriteViewModel> viewModels)
+    {
+        var workReadViewModels = _workService
+            .CreateSeveral(viewModels.Select(WriteModelFromWriteViewModel));
+        return Ok(workReadViewModels);
     }
 
     [HttpGet]
@@ -52,7 +62,7 @@ public class WorksController : ControllerBase
         if (!_workService.Exists(id))
             return NotFound($"The Work Id {id} does not exist!");
             
-        _workService.Update(id, viewModel.Title, viewModel.EarliestPubDate, viewModel.SourceIds);
+        _workService.Update(id, WriteModelFromWriteViewModel(viewModel));
 
         return NoContent();
     }
@@ -65,6 +75,16 @@ public class WorksController : ControllerBase
             Title = work.Title,
             EarliestPubDate = work.EarliestPubDate,
             SourceIds = work.SourceIds
+        };
+    }
+
+    private static WorkWriteModel WriteModelFromWriteViewModel(WorkWriteViewModel viewModel)
+    {
+        return new WorkWriteModel()
+        {
+            Title = viewModel.Title,
+            EarliestPubDate = viewModel.EarliestPubDate,
+            SourceIds = viewModel.SourceIds
         };
     }
 }

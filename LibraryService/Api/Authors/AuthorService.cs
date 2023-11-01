@@ -8,6 +8,8 @@ public interface IAuthorService
 {
     AuthorReadViewModel Create(AuthorWriteModel model);
 
+    public IEnumerable<AuthorReadViewModel> CreateSeveral(IEnumerable<AuthorWriteModel> models);
+
     void Update(int id, AuthorWriteModel model);
 
     IEnumerable<Author> GetAll();
@@ -49,6 +51,43 @@ public class AuthorService : IAuthorService
         };
 
         return authorReadViewModel;
+    }
+
+    public IEnumerable<AuthorReadViewModel> CreateSeveral(IEnumerable<AuthorWriteModel> models)
+    {
+        var authorReadViewModels = new List<AuthorReadViewModel>();
+        var authors = new List<Author>();
+        foreach (AuthorWriteModel model in models)
+        {
+            var author = new Author
+            {
+                Name = model.Name,
+                Biography = model.Biography,
+                BirthDate = model.BirthDate,
+                DeathDate = model.DeathDate,
+                SourceIds = model.SourceIds
+            };
+            authors.Add(author);
+            _dbContext.Authors.Add(author);
+        }
+
+        _dbContext.SaveChanges();
+
+        foreach (Author author in authors)
+        {
+            var authorReadViewModel = new AuthorReadViewModel
+            {
+                Id = author.Id,
+                Name = author.Name,
+                Biography = author.Biography,
+                BirthDate = author.BirthDate,
+                DeathDate = author.DeathDate,
+                SourceIds = author.SourceIds
+            };
+            authorReadViewModels.Add(authorReadViewModel);
+        }
+
+        return authorReadViewModels;
     }
 
     public void Update(int id, AuthorWriteModel model)
