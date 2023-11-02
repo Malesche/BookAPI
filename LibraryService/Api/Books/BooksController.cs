@@ -31,6 +31,25 @@ public class BooksController : ControllerBase
         return NoContent();
     }
 
+    [HttpPost]
+    [Route("CreateSeveral")]
+    public IActionResult CreateSeveralBooks([FromBody] IEnumerable<BookWriteViewModel> viewModels)
+    {
+        foreach (BookWriteViewModel model in viewModels)
+        {
+            if (model.WorkId is not null && !_bookService.WorkExists(model.WorkId))
+                return NotFound($"The Work Id {model.WorkId} does not exist! (used in the Book {model.Title})");
+
+            foreach (BookAuthorWriteViewModel bookAuthor in model.BookAuthors)
+                if (!_bookService.AuthorExists(bookAuthor.AuthorId))
+                    return NotFound($"The Author Id {bookAuthor.AuthorId} does not exist!  (used in the Book {model.Title})");
+        }
+
+        _bookService.CreateSeveral(viewModels.Select(WriteModelFromWriteViewModel));
+
+        return NoContent();
+    }
+
     [HttpPost("{bookId:int}/Authors")]
     public IActionResult AddAuthor(int bookId, [FromBody]BookAuthorWriteViewModel viewModel)
     {

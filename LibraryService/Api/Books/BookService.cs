@@ -8,6 +8,8 @@ public interface IBookService
 {
     public void Create(BookWriteModel model);
 
+    public void CreateSeveral(IEnumerable<BookWriteModel> models);
+
     public void Update(int id, BookWriteModel model);
 
     public void Delete(int id);
@@ -44,10 +46,13 @@ public class BookService : IBookService
 
     public void Create(BookWriteModel model)
     {
-        var book = new Book();
-        FillBook(book, model);
+        _dbContext.Books.Add(BookFromWriteModel(model));
+        _dbContext.SaveChanges();
+    }
 
-        _dbContext.Books.Add(book);
+    public void CreateSeveral(IEnumerable<BookWriteModel> models)
+    {
+        _dbContext.Books.AddRange(models.Select(BookFromWriteModel));
         _dbContext.SaveChanges();
     }
 
@@ -154,6 +159,13 @@ public class BookService : IBookService
         return _dbContext
             .BookAuthor
             .Any(a => a.BookId == bookId && a.AuthorId == authorId && a.AuthorRole == authorRole);
+    }
+
+    private Book BookFromWriteModel(BookWriteModel model)
+    {
+        var book = new Book();
+        FillBook(book, model);
+        return book;
     }
 
     private void FillBook(Book book, BookWriteModel model)
