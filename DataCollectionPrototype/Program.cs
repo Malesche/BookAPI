@@ -21,7 +21,7 @@ public static class Program
                     //new GoogleBooksGatherer(),
                 },
                 new PassThroughConsolidator(),
-                new LibraryApiWriter(),
+                new LibraryApiListWriter(),
                 new RunnerConfiguration()
             );
 

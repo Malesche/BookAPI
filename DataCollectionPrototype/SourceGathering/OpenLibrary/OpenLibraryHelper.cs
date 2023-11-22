@@ -97,6 +97,7 @@ internal static class OpenLibraryHelper
     {
         return role switch
         {
+            "Author" => AuthorRole.Author,
             "Narrator" => AuthorRole.Narrator,
             "Translator" => AuthorRole.Translator,
             "Illustrator" => AuthorRole.Illustrator,

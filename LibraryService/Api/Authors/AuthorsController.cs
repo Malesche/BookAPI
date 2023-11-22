@@ -69,6 +69,8 @@ public class AuthorsController : ControllerBase
 
     private AuthorReadViewModel ToViewModel(Author author)
     {
+        if (author is null)
+            return null;
         return new AuthorReadViewModel
         {
             Id = author.Id,
@@ -82,6 +84,8 @@ public class AuthorsController : ControllerBase
 
     private static AuthorWriteModel WriteModelFromWriteViewModel(AuthorWriteViewModel viewModel)
     {
+        if (viewModel is null)
+            return null;
         return new AuthorWriteModel
         {
             Name = viewModel.Name,

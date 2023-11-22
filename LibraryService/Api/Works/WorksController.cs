@@ -69,6 +69,8 @@ public class WorksController : ControllerBase
 
     private WorkReadViewModel ToViewModel(Work work)
     {
+        if (work is null)
+            return null;
         return new WorkReadViewModel
         {
             Id = work.Id,
@@ -80,6 +82,8 @@ public class WorksController : ControllerBase
 
     private static WorkWriteModel WriteModelFromWriteViewModel(WorkWriteViewModel viewModel)
     {
+        if (viewModel is null)
+            return null;
         return new WorkWriteModel()
         {
             Title = viewModel.Title,

@@ -59,6 +59,8 @@ public class WorkService : IWorkService
         var works = new List<Work>();
         foreach (WorkWriteModel model in models)
         {
+            if (model is null)
+                continue;
             var work = new Work
             {
                 Title = model.Title,

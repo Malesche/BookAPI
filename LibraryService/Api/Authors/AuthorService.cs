@@ -59,6 +59,8 @@ public class AuthorService : IAuthorService
         var authors = new List<Author>();
         foreach (AuthorWriteModel model in models)
         {
+            if (model is null)
+                continue;
             var author = new Author
             {
                 Name = model.Name,

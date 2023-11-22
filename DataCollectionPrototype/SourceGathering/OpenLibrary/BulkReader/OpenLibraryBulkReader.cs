@@ -12,7 +12,7 @@ internal class OpenLibraryBulkReader: IDataSourceGatherer
     private const string EditionsPath = $"{RootPath}ol_dump_editions_2023-09-30.txt";
     private const string WorksPath = $"{RootPath}ol_dump_works_2023-09-30.txt";
     private const string AuthorsPath = $"{RootPath}ol_dump_authors_2023-09-30.txt";
-    private const int EditionsToImport = 5000000;
+    private const int EditionsToImport = 100;
     private const char ItemSeparator = '\t';
     private const string SourceTypeIdentifier = "OpenLibraryContribution";
 
@@ -54,6 +54,12 @@ internal class OpenLibraryBulkReader: IDataSourceGatherer
                     var currentAuthor = new AuthorModel { 
                         Name = name, 
                         SourceIds = SourceTypeIdentifier };
+                    
+                    if (bookModel.BookAuthors.Any(
+                        ba => ba.Author.Name == currentAuthor.Name
+                            && ba.AuthorRole == AuthorRole.Author))
+                        continue;
+
                     bookModel.Authors.Add(currentAuthor);
                     bookModel.BookAuthors.Add(new BookAuthor { 
                         AuthorRole = OpenLibraryHelper.StringToAuthorRole(role), 
@@ -66,14 +72,12 @@ internal class OpenLibraryBulkReader: IDataSourceGatherer
             {
                 foreach (var a in book.authors)
                 {
-                    //Console.WriteLine($"adding author to list:      {a.key}");
                     AddToListDictionary(authorsToFindForEditions, a.key, book.key);
                 }
             }
 
             if (book.works is not null)
             {
-                //Console.WriteLine($"adding work to list:        {book.works[0].key}");
                 AddToListDictionary(worksToFindForEditions, book.works[0].key, book.key);
             }
         }
@@ -92,6 +96,59 @@ internal class OpenLibraryBulkReader: IDataSourceGatherer
         return Task.FromResult(bookModelList.ToArray());
     }
 
+    private void AddAuthorsToEditions(
+        Dictionary<string, List<string>> authorsToFindForEditions,
+        Dictionary<string, BookModel> editionsToSave,
+        string authorsFilePath)
+    {
+        var authorsReader = new FileReader(authorsFilePath);
+
+        var currentLine = authorsReader.ReadNextLine();
+        while (currentLine is not null && authorsToFindForEditions.Count > 0)
+        {
+            var values = currentLine
+                .Split(new[] { ItemSeparator }, StringSplitOptions.RemoveEmptyEntries)
+                .Where(token => !string.IsNullOrWhiteSpace(token))
+                .ToArray();
+
+            if (!authorsToFindForEditions.ContainsKey(values[1]))
+            {
+                currentLine = authorsReader.ReadNextLine();
+                continue;
+            }
+
+            //Console.WriteLine($"still looking for {authorsToFindForEditions.Count}  authors");
+            var authorKey = values[1];
+            var authorModel = OpenLibraryHelper.AuthorModelFromJsonString(values[4]);
+            if (string.IsNullOrWhiteSpace(authorModel.Name))
+            {
+                currentLine = authorsReader.ReadNextLine();
+                continue;
+            }
+
+            foreach (var edition in authorsToFindForEditions[authorKey])
+            {
+                var bookModel = editionsToSave[edition];
+                var bookAuthor = new BookAuthor
+                {
+                    Book = bookModel,
+                    Author = authorModel,
+                    AuthorRole = AuthorRole.Author
+                };
+
+                if (bookModel.BookAuthors.Any(
+                    ba => ba.Author.SourceIds == authorModel.SourceIds
+                        && ba.AuthorRole == AuthorRole.Author))
+                    continue;
+
+                bookModel.BookAuthors.Add(bookAuthor);
+            }
+
+            authorsToFindForEditions.Remove(authorKey);
+        }
+        Console.WriteLine("done searching for authors");
+    }
+
     private static void AddWorksToEditions(
         IDictionary<string, List<string>> worksToFindForEditions, 
         IReadOnlyDictionary<string, BookModel> editionsToSave, 
@@ -102,7 +159,10 @@ internal class OpenLibraryBulkReader: IDataSourceGatherer
         var currentLine = worksReader.ReadNextLine();
         while (currentLine is not null && worksToFindForEditions.Count > 0)
         {
-            var values = currentLine.Split(ItemSeparator);
+            var values = currentLine
+                .Split(new[] { ItemSeparator }, StringSplitOptions.RemoveEmptyEntries)
+                .Where(token => !string.IsNullOrWhiteSpace(token))
+                .ToArray();
             if (!worksToFindForEditions.ContainsKey(values[1]))
             {
                 currentLine = worksReader.ReadNextLine();
@@ -129,49 +189,6 @@ internal class OpenLibraryBulkReader: IDataSourceGatherer
             currentLine = worksReader.ReadNextLine();
         }
         Console.WriteLine("done searching for works.");
-    }
-
-    private void AddAuthorsToEditions(
-        Dictionary<string, List<string>> authorsToFindForEditions, 
-        Dictionary<string, BookModel> editionsToSave, 
-        string authorsFilePath)
-    {
-        var authorsReader = new FileReader(authorsFilePath);
-
-        var currentLine = authorsReader.ReadNextLine();
-        while (currentLine is not null && authorsToFindForEditions.Count > 0)
-        {
-            var values = currentLine.Split(ItemSeparator);
-            if (!authorsToFindForEditions.ContainsKey(values[1]))
-            {
-                currentLine = authorsReader.ReadNextLine();
-                continue;
-            }
-
-            //Console.WriteLine($"still looking for {authorsToFindForEditions.Count}  authors");
-            var authorKey = values[1];
-            var authorModel = OpenLibraryHelper.AuthorModelFromJsonString(values[4]);
-            if (string.IsNullOrWhiteSpace(authorModel.Name))
-            {
-                currentLine = authorsReader.ReadNextLine();
-                continue;
-            }
-
-            foreach (var edition in authorsToFindForEditions[authorKey])
-            {
-                var bookModel = editionsToSave[edition];
-                var bookAuthor = new BookAuthor
-                {
-                    Book = bookModel,
-                    Author = authorModel, 
-                    AuthorRole = AuthorRole.Author
-                };
-                bookModel.BookAuthors.Add(bookAuthor);
-            }
-
-            authorsToFindForEditions.Remove(authorKey);
-        }
-        Console.WriteLine("done searching for authors");
     }
 
     private static void AddToListDictionary(

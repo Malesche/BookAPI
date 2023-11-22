@@ -53,7 +53,7 @@ internal class LibraryApiWriter : ITargetWriter
         }
 
         timer.Stop();
-        Console.WriteLine($"Time WriteAsync took: {timer.Elapsed}");
+        Console.WriteLine($"Time LibraryApiWriter WriteAsync took: {timer.Elapsed}");
     }
 
     private static BookWriteViewModel WriteModelFromBookModel(BookModel bookModel, int? workId, List<BookAuthorWriteViewModel> bookAuthorList)
