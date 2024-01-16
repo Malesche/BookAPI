@@ -1,5 +1,5 @@
 ﻿// ReSharper disable InconsistentNaming Because it is generated code.
-#pragma warning disable IDE1006 Because it is generated code.
+//#pragma warning disable IDE1006 Because it is generated code.
 
 namespace DataCollectionPrototype.SourceGathering.OpenLibrary.Model;
 

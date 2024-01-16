@@ -1,4 +1,5 @@
 ﻿using LibraryService.Api.Works;
+using LibraryService.Api.Works.Models;
 using LibraryService.Persistence;
 
 namespace LibraryService.Tests.Api.Works;
@@ -11,7 +12,10 @@ public class WorkServiceTests : TestWithSqliteBase
         var service = new WorkService(DbContext);
         var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
 
-        var model = service.Create("WorkTitle", dateDec1871, "s");
+        var model = service.Create(new WorkWriteModel { 
+            Title = "WorkTitle", 
+            EarliestPubDate = dateDec1871, 
+            SourceIds = "s" });
 
         Assert.Equal("WorkTitle", model.Title);
         Assert.Equal(new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7)), model.EarliestPubDate);
@@ -24,7 +28,10 @@ public class WorkServiceTests : TestWithSqliteBase
         var service = new WorkService(DbContext);
         var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
 
-        service.Create("WorkTitle", dateDec1871, "s");
+        service.Create(new WorkWriteModel {
+            Title = "WorkTitle",
+            EarliestPubDate = dateDec1871,
+            SourceIds = "s" });
 
         var work = DbContext.Works.Single();
         Assert.Equal("WorkTitle", work.Title);
@@ -40,7 +47,12 @@ public class WorkServiceTests : TestWithSqliteBase
         var workId = CreateWork("TitleBeforeUpdate", dateDec1871,"s");
         var service = new WorkService(DbContext);
 
-        service.Update(workId, "TitleForUpdate", dateDec1872, "updated");
+        service.Update(
+            workId, 
+            new WorkWriteModel {
+                Title = "TitleForUpdate",
+                EarliestPubDate = dateDec1872,
+                SourceIds = "updated" });
 
         var work = DbContext.Works.Single();
         Assert.Equal("TitleForUpdate", work.Title);

@@ -1,5 +1,5 @@
-﻿using LibraryService.Api.Authors.ViewModels;
-using LibraryService.Api.Works;
+﻿using LibraryService.Api.Works;
+using LibraryService.Api.Works.Models;
 using LibraryService.Api.Works.ViewModels;
 using LibraryService.Persistence;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +14,21 @@ public class WorksControllerTests
     {
         var workService = Substitute.For<IWorkService>();
         var dateDec1871 = new DateTimeOffset(1871, 12, 13, 7, 0, 0, TimeSpan.FromHours(-7));
-        workService.Create(Arg.Is<string>("Title1"), dateDec1871, Arg.Is<string>("sourceIds"))
-            .Returns(new WorkReadViewModel { Id = 1, Title = "Title1", EarliestPubDate = dateDec1871, SourceIds = "sourceIds" });
+        workService.Create(Arg.Is<WorkWriteModel>(model =>
+                model.Title == "Title1"
+                && model.EarliestPubDate == dateDec1871
+                && model.SourceIds == "sourceIds"))
+            .Returns(new WorkReadViewModel { 
+                Id = 1, 
+                Title = "Title1", 
+                EarliestPubDate = dateDec1871, 
+                SourceIds = "sourceIds" });
         var controller = new WorksController(workService);
 
-        var result = controller.CreateWork(new WorkWriteViewModel { Title = "Title1", EarliestPubDate = dateDec1871, SourceIds = "sourceIds" });
+        var result = controller.CreateWork(new WorkWriteViewModel { 
+            Title = "Title1", 
+            EarliestPubDate = dateDec1871, 
+            SourceIds = "sourceIds" });
 
         Assert.IsType<OkObjectResult>(result);
         var okObjectResult = (OkObjectResult)result;
@@ -39,7 +49,10 @@ public class WorksControllerTests
 
         controller.CreateWork(new WorkWriteViewModel { Title = "WorkTitle", EarliestPubDate = dateDec1871, SourceIds = "s" });
 
-        workService.Received(1).Create("WorkTitle", dateDec1871, "s");
+        workService.Received(1).Create(Arg.Is<WorkWriteModel>(model =>
+                model.Title == "WorkTitle"
+                && model.EarliestPubDate == dateDec1871
+                && model.SourceIds == "s"));
     }
 
     [Fact]
@@ -140,7 +153,12 @@ public class WorksControllerTests
 
         controller.UpdateWork(5, new WorkWriteViewModel { Title = "NewTitle", EarliestPubDate = dateDec1871, SourceIds = "s"});
 
-        workService.Received(1).Update(5, "NewTitle", dateDec1871, "s");
+        workService.Received(1).Update(
+            5, 
+            Arg.Is<WorkWriteModel>(model =>
+                model.Title == "NewTitle"
+                && model.EarliestPubDate == dateDec1871
+                && model.SourceIds == "s"));
     }
 
     [Fact]
@@ -164,7 +182,7 @@ public class WorksControllerTests
 
         controller.UpdateWork(5, new WorkWriteViewModel { Title = "NewTitle", EarliestPubDate = null });
 
-        workService.DidNotReceive().Update(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<string>());
+        workService.DidNotReceive().Update(Arg.Any<int>(), Arg.Any<WorkWriteModel>());
     }
 
     [Fact]
