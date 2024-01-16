@@ -1,6 +1,8 @@
 ﻿using DataCollectionPrototype.Core;
 using DataCollectionPrototype.Core.Model;
 using DataCollectionPrototype.SourceGathering.GoogleBooks.Model;
+using Microsoft.Extensions.Configuration;
+using System.Reflection;
 
 namespace DataCollectionPrototype.SourceGathering.GoogleBooks;
 
@@ -63,6 +65,11 @@ internal class GoogleBooksGatherer : IDataSourceGatherer
 
     public async Task<BookModel[]> CollectAsync()
     {
+        var config = new ConfigurationBuilder()
+            .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
+            .Build();
+        string googleBooksApiKey = config["googleBooksApiKey"];
+
         using var client = new HttpClient();
         client.BaseAddress = new Uri("https://www.googleapis.com/books/");
 
@@ -72,7 +79,7 @@ internal class GoogleBooksGatherer : IDataSourceGatherer
             Console.WriteLine($"trying GoogleBooks: {isbn}");
             try
             {
-                var response = await client.GetAsync($"v1/volumes?q=isbn:{isbn}&key=XXXXXXXXXXXX");
+                var response = await client.GetAsync($"v1/volumes?q=isbn:{isbn}&key={googleBooksApiKey}");
                 if (response.IsSuccessStatusCode)
                 {
                     var bookModel = await ParseBookAsync(response);

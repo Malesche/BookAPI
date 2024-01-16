@@ -4,6 +4,8 @@ using DataCollectionPrototype.SourceGathering.GoogleBooks;
 using DataCollectionPrototype.SourceGathering.OpenLibrary;
 using DataCollectionPrototype.SourceGathering.OpenLibrary.BulkReader;
 using DataCollectionPrototype.TargetWriting;
+using Microsoft.Extensions.Configuration;
+using System.Reflection;
 
 namespace DataCollectionPrototype;
 
@@ -16,12 +18,12 @@ public static class Program
             var runner = new DataCollectionRunner(
                 new IDataSourceGatherer[]
                 {
-                    new OpenLibraryBulkReader()
+                    //new OpenLibraryBulkReader(),
                     //new OpenLibraryGatherer()
-                    //new GoogleBooksGatherer(),
+                    new GoogleBooksGatherer()
                 },
                 new PassThroughConsolidator(),
-                new LibraryApiListWriter(),
+                new LibraryApiWriter(),
                 new RunnerConfiguration()
             );
 
