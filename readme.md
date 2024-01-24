@@ -9,7 +9,11 @@ Swagger Page                |  Response
 
 ## Data Collection
 
-The more experimental Data Collection Part started out retrieving Book Data from public APIs (OpenLibrary and GoogleBooks). I then moved on to processing bulk downloads from OpenLibrary, in order to import larger amounts of data. When processing hundreds of thousands of books, the writing to database became too slow and I am working still working on batch processing of the bulk downloads.
+The more experimental Data Collection Part started out retrieving Book Data from public APIs (OpenLibrary and GoogleBooks). I then moved on to processing bulk downloads from OpenLibrary, 
+In order to import larger amounts of data, bulk downloads from OpenLibrary are processed. 
+
+### WIP: 
+Batch processing of the bulk downloads to speed up writing to the database.
 
 <!--- ## Installation
 
